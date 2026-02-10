@@ -1,0 +1,34 @@
+/* ===================================
+   STATIC GRID LAYOUTS (NO CAROUSEL)
+   =================================== */
+
+/* Skills Grid */
+.skills-carousel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+/* Projects Grid */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+  gap: 3rem;
+  margin-top: 3rem;
+}
+
+/* Certifications Grid */
+.certifications-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+/* Remove carousel-specific styles when using grids */
+.skills-carousel-grid .skill-category,
+.projects-grid .project-card,
+.certifications-grid .certification-card {
+  min-width: unset;
+}
