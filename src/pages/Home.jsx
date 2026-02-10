@@ -13,6 +13,8 @@ import {
   Briefcase,
   GraduationCap,
   Award,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import {
   getProfile,
@@ -36,6 +38,12 @@ const Home = () => {
   const [certifications, setCertifications] = useState([]);
   const [education, setEducation] = useState([]);
   const [contactInfo, setContactInfo] = useState(null);
+  const [currentSkillIndex, setCurrentSkillIndex] = useState(0);
+  const SKILLS_PER_PAGE = 3;
+  const [currentProjectIndex, setCurrentProjectIndex] = useState(0);
+  const PROJECTS_PER_PAGE = 2;
+  const [currentCertificationIndex, setCurrentCertificationIndex] = useState(0);
+  const CERTIFICATIONS_PER_PAGE = 3;
 
   // Form state
   const [formData, setFormData] = useState({
@@ -170,6 +178,61 @@ const Home = () => {
     },
   );
 
+  // Pagination for skills
+  const totalSkillPages = Math.ceil(skillCards.length / SKILLS_PER_PAGE);
+  const visibleSkillCards = skillCards.slice(
+    currentSkillIndex * SKILLS_PER_PAGE,
+    (currentSkillIndex + 1) * SKILLS_PER_PAGE,
+  );
+
+  const nextSkillPage = () => {
+    setCurrentSkillIndex((prev) => (prev + 1) % totalSkillPages);
+  };
+
+  const prevSkillPage = () => {
+    setCurrentSkillIndex(
+      (prev) => (prev - 1 + totalSkillPages) % totalSkillPages,
+    );
+  };
+
+  // Pagination for projects
+  const totalProjectPages = Math.ceil(projects.length / PROJECTS_PER_PAGE);
+  const visibleProjectCards = projects.slice(
+    currentProjectIndex * PROJECTS_PER_PAGE,
+    (currentProjectIndex + 1) * PROJECTS_PER_PAGE,
+  );
+
+  const nextProjectPage = () => {
+    setCurrentProjectIndex((prev) => (prev + 1) % totalProjectPages);
+  };
+
+  const prevProjectPage = () => {
+    setCurrentProjectIndex(
+      (prev) => (prev - 1 + totalProjectPages) % totalProjectPages,
+    );
+  };
+
+  // Pagination for certifications
+  const totalCertificationPages = Math.ceil(
+    certifications.length / CERTIFICATIONS_PER_PAGE,
+  );
+  const visibleCertifications = certifications.slice(
+    currentCertificationIndex * CERTIFICATIONS_PER_PAGE,
+    (currentCertificationIndex + 1) * CERTIFICATIONS_PER_PAGE,
+  );
+
+  const nextCertificationPage = () => {
+    setCurrentCertificationIndex(
+      (prev) => (prev + 1) % totalCertificationPages,
+    );
+  };
+
+  const prevCertificationPage = () => {
+    setCurrentCertificationIndex(
+      (prev) => (prev - 1 + totalCertificationPages) % totalCertificationPages,
+    );
+  };
+
   if (loading) {
     return (
       <div className="loading-container">
@@ -288,33 +351,70 @@ const Home = () => {
               </p>
             </div>
 
-            <div className="skills-carousel-grid">
-              {skillCards.map((card, index) => (
-                <div key={index} className="skill-category">
-                  <h3 className="category-title">
-                    {categoryNames[card.category] || card.category}
-                    {card.totalCards > 1 &&
-                      ` (${card.cardIndex + 1}/${card.totalCards})`}
-                  </h3>
-                  {card.skills.map((skill) => (
-                    <div key={skill.id} className="skill-item">
-                      <div className="skill-name">
-                        <span>{skill.name}</span>
-                        <span className="skill-percentage">
-                          {skill.percentage}%
-                        </span>
+            <div className="carousel-container">
+              <button
+                className="carousel-btn carousel-btn-left"
+                onClick={prevSkillPage}
+                disabled={totalSkillPages <= 1}
+                aria-label="Previous skills"
+              >
+                <ChevronLeft size={24} />
+              </button>
+
+              <div className="skills-carousel-grid">
+                {visibleSkillCards.map((card, index) => (
+                  <div
+                    key={`${card.category}-${index}`}
+                    className="skill-category"
+                  >
+                    <h3 className="category-title">
+                      {categoryNames[card.category] || card.category}
+                      {card.totalCards > 1 &&
+                        ` (${card.cardIndex + 1}/${card.totalCards})`}
+                    </h3>
+                    {card.skills.map((skill) => (
+                      <div key={skill.id} className="skill-item">
+                        <div className="skill-name">
+                          <span>{skill.name}</span>
+                          <span className="skill-percentage">
+                            {skill.percentage}%
+                          </span>
+                        </div>
+                        <div className="skill-bar">
+                          <div
+                            className="skill-progress"
+                            style={{ width: `${skill.percentage}%` }}
+                          ></div>
+                        </div>
                       </div>
-                      <div className="skill-bar">
-                        <div
-                          className="skill-progress"
-                          style={{ width: `${skill.percentage}%` }}
-                        ></div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ))}
+                    ))}
+                  </div>
+                ))}
+              </div>
+
+              <button
+                className="carousel-btn carousel-btn-right"
+                onClick={nextSkillPage}
+                disabled={totalSkillPages <= 1}
+                aria-label="Next skills"
+              >
+                <ChevronRight size={24} />
+              </button>
             </div>
+
+            {totalSkillPages > 1 && (
+              <div className="carousel-indicators">
+                {Array.from({ length: totalSkillPages }).map((_, index) => (
+                  <div
+                    key={index}
+                    className={`carousel-indicator ${
+                      index === currentSkillIndex ? "active" : ""
+                    }`}
+                    onClick={() => setCurrentSkillIndex(index)}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </section>
       )}
@@ -375,33 +475,68 @@ const Home = () => {
                 Some of my recent work and side projects
               </p>
             </div>
-            <div className="projects-grid">
-              {projects.map((project) => (
-                <div key={project.id} className="project-card">
-                  {project.image && (
-                    <img
-                      src={project.image}
-                      alt={project.title}
-                      className="project-image"
-                    />
-                  )}
-                  <div className="project-info">
-                    <h3 className="project-title">{project.title}</h3>
-                    <p className="project-description">{project.description}</p>
-                    {project.github_link && (
-                      <a
-                        href={project.github_link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="project-link"
-                      >
-                        View on GitHub <ExternalLink size={16} />
-                      </a>
+            <div className="carousel-container">
+              <button
+                className="carousel-btn carousel-btn-left"
+                onClick={prevProjectPage}
+                disabled={totalProjectPages <= 1}
+                aria-label="Previous projects"
+              >
+                <ChevronLeft size={24} />
+              </button>
+
+              <div className="projects-grid">
+                {visibleProjectCards.map((project) => (
+                  <div key={project.id} className="project-card">
+                    {project.image && (
+                      <img
+                        src={project.image}
+                        alt={project.title}
+                        className="project-image"
+                      />
                     )}
+                    <div className="project-info">
+                      <h3 className="project-title">{project.title}</h3>
+                      <p className="project-description">
+                        {project.description}
+                      </p>
+                      {project.github_link && (
+                        <a
+                          href={project.github_link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="project-link"
+                        >
+                          View on GitHub <ExternalLink size={16} />
+                        </a>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>{" "}
+                ))}
+              </div>
+
+              <button
+                className="carousel-btn carousel-btn-right"
+                onClick={nextProjectPage}
+                disabled={totalProjectPages <= 1}
+                aria-label="Next projects"
+              >
+                <ChevronRight size={24} />
+              </button>
+            </div>
+            {totalProjectPages > 1 && (
+              <div className="carousel-indicators">
+                {Array.from({ length: totalProjectPages }).map((_, index) => (
+                  <div
+                    key={index}
+                    className={`carousel-indicator ${
+                      index === currentProjectIndex ? "active" : ""
+                    }`}
+                    onClick={() => setCurrentProjectIndex(index)}
+                  />
+                ))}
+              </div>
+            )}{" "}
           </div>
         </section>
       )}
@@ -458,44 +593,80 @@ const Home = () => {
               </p>
             </div>
 
-            <div className="certifications-grid">
-              {certifications.map((cert) => (
-                <div
-                  key={cert.id}
-                  className="certification-card"
-                  onClick={() =>
-                    cert.pdf_file && window.open(cert.pdf_file, "_blank")
-                  }
-                  style={{ cursor: "pointer" }}
-                >
-                  {cert.image ? (
-                    <img
-                      src={cert.image}
-                      alt={cert.title}
-                      className="certification-image"
-                    />
-                  ) : (
-                    <div
-                      style={{
-                        height: "220px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        background: "var(--bg-primary)",
-                      }}
-                    >
-                      <Award
-                        size={60}
-                        style={{ color: "var(--accent-color)" }}
+            <div className="carousel-container">
+              <button
+                className="carousel-btn carousel-btn-left"
+                onClick={prevCertificationPage}
+                disabled={totalCertificationPages <= 1}
+                aria-label="Previous certifications"
+              >
+                <ChevronLeft size={24} />
+              </button>
+
+              <div className="certifications-grid">
+                {visibleCertifications.map((cert) => (
+                  <div
+                    key={cert.id}
+                    className="certification-card"
+                    onClick={() =>
+                      cert.pdf_file && window.open(cert.pdf_file, "_blank")
+                    }
+                    style={{ cursor: "pointer" }}
+                  >
+                    {cert.image ? (
+                      <img
+                        src={cert.image}
+                        alt={cert.title}
+                        className="certification-image"
                       />
+                    ) : (
+                      <div
+                        style={{
+                          height: "220px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          background: "var(--bg-primary)",
+                        }}
+                      >
+                        <Award
+                          size={60}
+                          style={{ color: "var(--accent-color)" }}
+                        />
+                      </div>
+                    )}
+                    <div className="certification-info">
+                      <h3 className="certification-title">{cert.title}</h3>
                     </div>
-                  )}
-                  <div className="certification-info">
-                    <h3 className="certification-title">{cert.title}</h3>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+
+              <button
+                className="carousel-btn carousel-btn-right"
+                onClick={nextCertificationPage}
+                disabled={totalCertificationPages <= 1}
+                aria-label="Next certifications"
+              >
+                <ChevronRight size={24} />
+              </button>
             </div>
+
+            {totalCertificationPages > 1 && (
+              <div className="carousel-indicators">
+                {Array.from({ length: totalCertificationPages }).map(
+                  (_, index) => (
+                    <div
+                      key={index}
+                      className={`carousel-indicator ${
+                        index === currentCertificationIndex ? "active" : ""
+                      }`}
+                      onClick={() => setCurrentCertificationIndex(index)}
+                    />
+                  ),
+                )}
+              </div>
+            )}
           </div>
         </section>
       )}
@@ -514,6 +685,18 @@ const Home = () => {
             {/* Contact Information */}
             <div className="contact-info-box">
               <h3 className="contact-info-title">Contact Information</h3>
+
+              {contactInfo?.description && (
+                <p
+                  style={{
+                    marginBottom: "2rem",
+                    color: "var(--text-secondary)",
+                    lineHeight: "1.6",
+                  }}
+                >
+                  {contactInfo.description}
+                </p>
+              )}
 
               {(contactInfo?.email || profile?.email) && (
                 <div className="contact-detail">
@@ -551,17 +734,51 @@ const Home = () => {
                 </div>
               )}
 
-              {contactInfo?.description && (
-                <p
-                  style={{
-                    marginTop: "1.5rem",
-                    color: "var(--text-secondary)",
-                    lineHeight: "1.6",
-                  }}
-                >
-                  {contactInfo.description}
-                </p>
-              )}
+              <div
+                className="social-links"
+                style={{ marginTop: "2rem", justifyContent: "flex-start" }}
+              >
+                {profile?.github_link && (
+                  <a
+                    href={profile.github_link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="social-link"
+                  >
+                    <Github size={24} />
+                  </a>
+                )}
+                {profile?.linkedin_link && (
+                  <a
+                    href={profile.linkedin_link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="social-link"
+                  >
+                    <Linkedin size={24} />
+                  </a>
+                )}
+                {profile?.twitter_link && (
+                  <a
+                    href={profile.twitter_link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="social-link"
+                  >
+                    <Twitter size={24} />
+                  </a>
+                )}
+                {profile?.leetcode_link && (
+                  <a
+                    href={profile.leetcode_link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="social-link"
+                  >
+                    <Code2 size={24} />
+                  </a>
+                )}
+              </div>
             </div>
 
             {/* Contact Form */}

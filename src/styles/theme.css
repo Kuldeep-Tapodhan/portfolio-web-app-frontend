@@ -13,9 +13,9 @@
 .light-mode {
   --bg-primary: #f8fafc;   /* Almost white */
   --bg-secondary: #ffffff; /* Pure white */
-  --text-primary: #0f172a; /* Dark Navy */
-  --text-secondary: #475569;
-  --accent-color: #0284c7; /* Darker blue for contrast */
+  --text-primary: #020617; /* Slate 950 - Deeper black/navy for better contrast */
+  --text-secondary: #334155; /* Slate 700 - Darker grey for better readability */
+  --accent-color: #0284c7; /* Darker blue */
   --border-color: #cbd5e1;
   --nav-bg: rgba(255, 255, 255, 0.95);
 }
