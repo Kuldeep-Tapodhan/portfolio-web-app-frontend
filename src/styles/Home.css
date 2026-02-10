@@ -979,6 +979,45 @@
 }
 
 /* ===================================
+   STATIC GRID LAYOUTS (NO CAROUSEL)
+   =================================== */
+
+/* Skills Grid */
+.skills-carousel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+/* Projects Grid */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+  gap: 3rem;
+  margin-top: 3rem;
+}
+
+/* Certifications Grid */
+.certifications-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.carousel-container .certifications-grid {
+  margin-top: 0;
+}
+
+/* Remove carousel-specific styles when using grids */
+.skills-carousel-grid .skill-category,
+.projects-grid .project-card,
+.certifications-grid .certification-card {
+  min-width: unset;
+}
+
+/* ===================================
    RESPONSIVE DESIGN - ENHANCED
    =================================== */
 
@@ -1075,8 +1114,12 @@
     margin-bottom: 3rem;
   }
 
-  .skills-categories {
-    grid-template-columns: 1fr;
+  /* Force 1 column for all grids on mobile */
+  .skills-carousel-grid,
+  .projects-grid,
+  .education-grid,
+  .certifications-grid {
+    grid-template-columns: 1fr !important;
     gap: 2rem;
   }
 
@@ -1084,15 +1127,8 @@
     padding: 2rem;
   }
 
-  .projects-grid {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
-
-  .education-grid,
-  .certifications-grid {
-    grid-template-columns: 1fr;
-    gap: 2rem;
+  .project-card {
+     height: auto; /* Fix fixed height on mobile */
   }
 
   .timeline-content {
@@ -1120,12 +1156,12 @@
   }
 
   .carousel-container {
-    padding: 0 40px;
+    padding: 0 10px; /* Reduced padding for mobile */
   }
 
   .carousel-btn {
-    width: 40px;
-    height: 40px;
+    width: 35px; /* Smaller buttons */
+    height: 35px;
   }
 
   .carousel-indicators {
@@ -1193,42 +1229,4 @@ html {
 
 * {
   box-sizing: border-box;
-}
-/* ===================================
-   STATIC GRID LAYOUTS (NO CAROUSEL)
-   =================================== */
-
-/* Skills Grid */
-.skills-carousel-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 2rem;
-  margin-top: 3rem;
-}
-
-/* Projects Grid */
-.projects-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
-  gap: 3rem;
-  margin-top: 3rem;
-}
-
-/* Certifications Grid */
-.certifications-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 2rem;
-  margin-top: 3rem;
-}
-
-.carousel-container .certifications-grid {
-  margin-top: 0;
-}
-
-/* Remove carousel-specific styles when using grids */
-.skills-carousel-grid .skill-category,
-.projects-grid .project-card,
-.certifications-grid .certification-card {
-  min-width: unset;
 }
