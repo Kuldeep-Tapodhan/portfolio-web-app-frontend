@@ -1,7 +1,10 @@
 import axios from 'axios';
 
 // 1. Base URL (Matches your Django Backend)
-const API_BASE_URL = "/api";
+const API_BASE_URL = import.meta.env.VITE_API_TARGET 
+    ? `${import.meta.env.VITE_API_TARGET}/api` 
+    : "/api";
+
 
 const api = axios.create({
     baseURL: API_BASE_URL,
