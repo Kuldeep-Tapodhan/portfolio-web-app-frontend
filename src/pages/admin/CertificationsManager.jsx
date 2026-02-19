@@ -24,6 +24,7 @@ const CertificationsManager = () => {
   };
 
   const [formData, setFormData] = useState(initialFormState);
+  const [submitting, setSubmitting] = useState(false);
 
   // --- 1. Fetch Data ---
   useEffect(() => {
@@ -70,6 +71,7 @@ const CertificationsManager = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitting(true);
     try {
       const payload = new FormData();
       payload.append("title", formData.title);
@@ -92,10 +94,17 @@ const CertificationsManager = () => {
 
       handleCancelEdit();
       fetchCerts();
+      alert(
+        editingId
+          ? "Certification updated successfully!"
+          : "Certification created successfully!",
+      );
     } catch (error) {
       alert(
         "Error saving: " + (error.response?.data?.message || "Check console"),
       );
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -327,8 +336,35 @@ const CertificationsManager = () => {
                 Cancel
               </button>
             )}
-            <button type="submit" style={styles.submitBtn}>
-              <Save size={18} /> {editingId ? "Update" : "Save"}
+            <button
+              type="submit"
+              style={{
+                ...styles.submitBtn,
+                opacity: submitting ? 0.7 : 1,
+                cursor: submitting ? "not-allowed" : "pointer",
+              }}
+              disabled={submitting}
+            >
+              {submitting ? (
+                <>
+                  <div
+                    className="spinner-small"
+                    style={{
+                      width: "16px",
+                      height: "16px",
+                      border: "2px solid rgba(255,255,255,0.3)",
+                      borderTopColor: "white",
+                      borderRadius: "50%",
+                      animation: "spin 1s linear infinite",
+                    }}
+                  ></div>
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save size={18} /> {editingId ? "Update" : "Save"}
+                </>
+              )}
             </button>
           </div>
         </form>

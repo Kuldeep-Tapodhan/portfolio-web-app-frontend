@@ -4,6 +4,7 @@ import { User, Save, FileText, Upload, Image as ImageIcon } from "lucide-react";
 
 const ProfileManager = () => {
   const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [existingId, setExistingId] = useState(null);
 
   // Matching your Django Model exactly
@@ -73,6 +74,7 @@ const ProfileManager = () => {
   // --- 3. Submit ---
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitting(true);
     try {
       const payload = new FormData();
       payload.append("name", formData.name);
@@ -107,6 +109,8 @@ const ProfileManager = () => {
         JSON.stringify(error.response?.data) ||
         error.message;
       alert("Error saving: " + errMsg);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -314,8 +318,35 @@ const ProfileManager = () => {
           </p>
         </div>
 
-        <button type="submit" style={styles.submitBtn}>
-          <Save size={20} /> Update Identity
+        <button
+          type="submit"
+          style={{
+            ...styles.submitBtn,
+            opacity: submitting ? 0.7 : 1,
+            cursor: submitting ? "not-allowed" : "pointer",
+          }}
+          disabled={submitting}
+        >
+          {submitting ? (
+            <>
+              <div
+                className="spinner-small"
+                style={{
+                  width: "16px",
+                  height: "16px",
+                  border: "2px solid rgba(255,255,255,0.3)",
+                  borderTopColor: "white",
+                  borderRadius: "50%",
+                  animation: "spin 1s linear infinite",
+                }}
+              ></div>
+              Saving...
+            </>
+          ) : (
+            <>
+              <Save size={20} /> Update Identity
+            </>
+          )}
         </button>
       </form>
     </div>

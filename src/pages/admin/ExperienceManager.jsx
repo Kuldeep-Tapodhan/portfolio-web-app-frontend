@@ -13,6 +13,7 @@ import {
 const ExperienceManager = () => {
   const [experiences, setExperiences] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const [editingId, setEditingId] = useState(null);
 
   const initialFormState = {
@@ -72,6 +73,7 @@ const ExperienceManager = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitting(true);
     try {
       const payload = new FormData();
       payload.append("company_name", formData.company_name);
@@ -101,11 +103,18 @@ const ExperienceManager = () => {
 
       handleCancelEdit();
       fetchExperiences();
+      alert(
+        editingId
+          ? "Experience updated successfully!"
+          : "Experience added successfully!",
+      );
     } catch (error) {
       console.error(error);
       alert(
         "Error saving: " + (error.response?.data?.message || "Check console"),
       );
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -400,8 +409,35 @@ const ExperienceManager = () => {
                 Cancel
               </button>
             )}
-            <button type="submit" style={styles.submitBtn}>
-              <Save size={18} /> {editingId ? "Update Role" : "Save Role"}
+            <button
+              type="submit"
+              style={{
+                ...styles.submitBtn,
+                opacity: submitting ? 0.7 : 1,
+                cursor: submitting ? "not-allowed" : "pointer",
+              }}
+              disabled={submitting}
+            >
+              {submitting ? (
+                <>
+                  <div
+                    className="spinner-small"
+                    style={{
+                      width: "16px",
+                      height: "16px",
+                      border: "2px solid rgba(255,255,255,0.3)",
+                      borderTopColor: "white",
+                      borderRadius: "50%",
+                      animation: "spin 1s linear infinite",
+                    }}
+                  ></div>
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save size={18} /> {editingId ? "Update Role" : "Save Role"}
+                </>
+              )}
             </button>
           </div>
         </form>

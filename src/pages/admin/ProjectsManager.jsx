@@ -22,11 +22,12 @@ const ProjectsManager = () => {
     description: "",
     tech_stack: "", // Input as comma separated string
     github_link: "",
-    live_link: "",
+    live_url: "",
     image: null,
   };
 
   const [formData, setFormData] = useState(initialFormState);
+  const [submitting, setSubmitting] = useState(false);
 
   // --- 1. Fetch Data on Load ---
   useEffect(() => {
@@ -63,7 +64,7 @@ const ProjectsManager = () => {
       description: project.description,
       tech_stack: project.tech_stack || "",
       github_link: project.github_link || "",
-      live_link: project.live_link || "",
+      live_url: project.live_url || "",
       image: null,
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -76,13 +77,14 @@ const ProjectsManager = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitting(true);
     try {
       const payload = new FormData();
       payload.append("title", formData.title);
       payload.append("description", formData.description);
       payload.append("tech_stack", formData.tech_stack);
       payload.append("github_link", formData.github_link);
-      payload.append("live_link", formData.live_link);
+      payload.append("live_url", formData.live_url);
 
       // Only append image if a new one is selected
       if (formData.image) {
@@ -99,10 +101,17 @@ const ProjectsManager = () => {
 
       handleCancelEdit();
       fetchProjects();
+      alert(
+        editingId
+          ? "Project updated successfully!"
+          : "Project created successfully!",
+      );
     } catch (error) {
       alert(
         "Error saving: " + (error.response?.data?.message || error.message),
       );
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -369,9 +378,9 @@ const ProjectsManager = () => {
               <input
                 type="url"
                 style={styles.input}
-                value={formData.live_link}
+                value={formData.live_url}
                 onChange={(e) =>
-                  setFormData({ ...formData, live_link: e.target.value })
+                  setFormData({ ...formData, live_url: e.target.value })
                 }
               />
             </div>
@@ -404,8 +413,35 @@ const ProjectsManager = () => {
                 Cancel
               </button>
             )}
-            <button type="submit" style={styles.submitBtn}>
-              <Save size={18} /> {editingId ? "Update" : "Save Project"}
+            <button
+              type="submit"
+              style={{
+                ...styles.submitBtn,
+                opacity: submitting ? 0.7 : 1,
+                cursor: submitting ? "not-allowed" : "pointer",
+              }}
+              disabled={submitting}
+            >
+              {submitting ? (
+                <>
+                  <div
+                    className="spinner-small"
+                    style={{
+                      width: "16px",
+                      height: "16px",
+                      border: "2px solid rgba(255,255,255,0.3)",
+                      borderTopColor: "white",
+                      borderRadius: "50%",
+                      animation: "spin 1s linear infinite",
+                    }}
+                  ></div>
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save size={18} /> {editingId ? "Update" : "Save Project"}
+                </>
+              )}
             </button>
           </div>
         </form>
@@ -470,9 +506,9 @@ const ProjectsManager = () => {
                     <Github size={16} /> Code
                   </a>
                 )}
-                {proj.live_link && (
+                {proj.live_url && (
                   <a
-                    href={proj.live_link}
+                    href={proj.live_url}
                     target="_blank"
                     rel="noreferrer"
                     style={styles.linkItem}

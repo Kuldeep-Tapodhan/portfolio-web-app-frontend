@@ -500,16 +500,63 @@ const Home = () => {
                       <p className="project-description">
                         {project.description}
                       </p>
-                      {project.github_link && (
-                        <a
-                          href={project.github_link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="project-link"
-                        >
-                          View on GitHub <ExternalLink size={16} />
-                        </a>
-                      )}
+
+                      {/* Tech Stack Badges */}
+                      <div
+                        className="project-tech-stack"
+                        style={{
+                          display: "flex",
+                          flexWrap: "wrap",
+                          gap: "8px",
+                          marginBottom: "1rem",
+                        }}
+                      >
+                        {(project.tech_stack || "")
+                          .split(",")
+                          .filter((t) => t.trim() !== "")
+                          .map((tech, i) => (
+                            <span
+                              key={i}
+                              className="tech-badge"
+                              style={{
+                                fontSize: "0.75rem",
+                                background: "rgba(56, 189, 248, 0.1)",
+                                color: "#38bdf8",
+                                padding: "2px 8px",
+                                borderRadius: "4px",
+                                border: "1px solid rgba(56, 189, 248, 0.2)",
+                              }}
+                            >
+                              {tech.trim()}
+                            </span>
+                          ))}
+                      </div>
+
+                      <div
+                        className="project-links"
+                        style={{ display: "flex", gap: "15px" }}
+                      >
+                        {project.github_link && (
+                          <a
+                            href={project.github_link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="project-link"
+                          >
+                            <Github size={16} /> Code
+                          </a>
+                        )}
+                        {project.live_url && (
+                          <a
+                            href={project.live_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="project-link"
+                          >
+                            <ExternalLink size={16} /> Live Demo
+                          </a>
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))}
