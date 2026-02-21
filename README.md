@@ -1,4 +1,4 @@
-<![CDATA[<div align="center">
+<div align="center">
 
 # 🎨 Portfolio Frontend
 
@@ -435,4 +435,3 @@ portfolio_frontend/
 **Built with React 19 + Vite** ⚛️
 
 </div>
-]]>
