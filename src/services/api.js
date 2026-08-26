@@ -4,14 +4,12 @@ import axios from 'axios';
 const getApiBaseUrl = () => {
     let target = import.meta.env.VITE_API_TARGET || import.meta.env.VITE_BACKEND_URL;
     if (target) {
-        // Normalize: strip trailing slashes
         target = target.trim().replace(/\/+$/, '');
         if (target.endsWith('/api')) {
             return target;
         }
         return `${target}/api`;
     }
-    // Fallback URL if env is missing
     return "https://portfolio-web-app-backend.onrender.com/api";
 };
 
@@ -19,12 +17,10 @@ const api = axios.create({
     baseURL: getApiBaseUrl(),
     headers: {
         "Content-Type": "application/json",
-        "Cache-Control": "no-cache, no-store, must-revalidate",
-        "Pragma": "no-cache",
     },
 });
 
-// Media URL Helper: prepend backend domain from .env for uploaded assets
+// Media URL Helper
 export const getMediaUrl = (path) => {
     if (!path) return '';
     if (path.startsWith('http://') || path.startsWith('https://')) {
@@ -35,16 +31,13 @@ export const getMediaUrl = (path) => {
     return `${target}${path.startsWith('/') ? '' : '/'}${path}`;
 };
 
-// 1. Request Interceptor: Attach Auth Token & Anti-Cache Headers
+// Request Interceptor: Attach Auth Token if present
 api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem("access");
         if (token) {
             config.headers["Authorization"] = `Bearer ${token}`;
         }
-        
-        config.headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
-        config.headers["Pragma"] = "no-cache";
 
         config.metadata = { startTime: new Date() };
         const endpoint = `${config.baseURL || ''}${config.url}`;
@@ -67,7 +60,7 @@ api.interceptors.request.use(
     }
 );
 
-// 2. Response Interceptor: Log API responses and issues/errors
+// Response Interceptor: Log API responses and issues/errors
 api.interceptors.response.use(
     (response) => {
         const duration = response.config.metadata 
