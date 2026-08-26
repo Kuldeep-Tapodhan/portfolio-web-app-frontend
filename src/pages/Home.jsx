@@ -149,6 +149,13 @@ const Home = () => {
     return `${startStr} - ${endStr}`;
   };
 
+  // Helper to shorten text descriptions for card uniformity
+  const truncateText = (text, maxLength = 135) => {
+    if (!text) return '';
+    if (text.length <= maxLength) return text;
+    return text.slice(0, maxLength).trim() + '...';
+  };
+
   return (
     <div className="home-container">
       {/* Ambient Neural Grid & Background */}
@@ -293,7 +300,9 @@ const Home = () => {
                       <span>{isFeatured ? 'Featured Architecture' : 'Production Build'}</span>
                     </div>
                     <h3 className="project-title">{project.title}</h3>
-                    <p className="project-description">{project.description}</p>
+                    <p className="project-description" title={project.description}>
+                      {truncateText(project.description, 135)}
+                    </p>
                   </div>
 
                   <div>
