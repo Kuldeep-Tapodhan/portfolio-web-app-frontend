@@ -1,14 +1,19 @@
 import api from './api';
 
+// In-flight request caching to prevent duplicate concurrent calls
+let profilePromise = null;
+
 // Profile API
 export const getProfile = async () => {
-    try {
-        const response = await api.get('/profiles/');
-        return response.data.data?.[0] || null; // Extract from nested data structure
-    } catch (error) {
-        console.error('Error fetching profile:', error);
-        throw error;
+    if (!profilePromise) {
+        profilePromise = api.get('/profiles/')
+            .then(res => res.data.data?.[0] || null)
+            .catch(err => {
+                profilePromise = null;
+                throw err;
+            });
     }
+    return profilePromise;
 };
 
 // Skills API
