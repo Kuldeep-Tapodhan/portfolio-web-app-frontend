@@ -33,15 +33,8 @@ const Navbar = () => {
   return (
     <header className={`navbar-header ${scrolled ? 'scrolled' : ''}`}>
       <div className="navbar-container">
-        {/* Brand Logo */}
+        {/* Brand Text Logo */}
         <Link to="/" className="navbar-brand">
-          <div className="brand-logo-wrapper">
-            <img 
-              src="/favicon.svg" 
-              alt="Kuldeep AI Logo" 
-              className="brand-logo-img" 
-            />
-          </div>
           <div className="brand-text">
             <span>Kuldeep</span>
             <span className="brand-highlight">.AI</span>

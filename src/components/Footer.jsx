@@ -13,9 +13,6 @@ const Footer = () => {
         <div className="footer-main-row">
           <div className="footer-brand-col">
             <div className="footer-brand-logo">
-              <div className="footer-logo-icon">
-                <Cpu size={20} />
-              </div>
               <span className="footer-brand-title">
                 Kuldeep<span className="brand-highlight">.AI</span>
               </span>
