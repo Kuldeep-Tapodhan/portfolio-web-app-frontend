@@ -2,26 +2,31 @@ import React, { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Sun, Moon, Menu, X, Terminal, Sparkles, User, Briefcase, GraduationCap, Award, Mail, ArrowUpRight } from "lucide-react";
 import { ThemeContext } from "../context/ThemeContext";
-import { getProfile } from "../services/portfolioApi";
+import { getProfile, getExperiences } from "../services/portfolioApi";
 
 const Navbar = () => {
   const { isDarkMode, toggleTheme } = useContext(ThemeContext);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profile, setProfile] = useState(null);
+  const [activeRole, setActiveRole] = useState("");
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const fetchProfile = async () => {
+    const fetchNavData = async () => {
       try {
-        const data = await getProfile();
-        if (data) {
-          setProfile(Array.isArray(data) ? data[0] : data);
-        }
+        const [profData, expData] = await Promise.all([
+          getProfile().catch(() => null),
+          getExperiences().catch(() => [])
+        ]);
+        const prof = Array.isArray(profData) ? profData[0] : profData;
+        setProfile(prof);
+        const currentExp = Array.isArray(expData) ? (expData.find(e => !e.end_date) || expData[0]) : null;
+        setActiveRole(currentExp?.role || prof?.title || "AI Engineer");
       } catch (error) {
-        console.error("Error fetching profile for navbar:", error);
+        console.error("Error fetching data for navbar:", error);
       }
     };
-    fetchProfile();
+    fetchNavData();
 
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
@@ -54,10 +59,10 @@ const Navbar = () => {
 
         {/* Right Section: Status Pill & Actions */}
         <div className="navbar-actions">
-          {profile && (
+          {activeRole && (
             <div className="nav-status-pill">
               <span className="pulse-dot"></span>
-              <span>{profile.title || "AI Developer"}</span>
+              <span>{activeRole}</span>
             </div>
           )}
 

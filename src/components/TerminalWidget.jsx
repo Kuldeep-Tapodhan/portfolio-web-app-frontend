@@ -97,8 +97,12 @@ const TerminalWidget = ({ profile, skills = [], projects = [], contactInfo, expe
     setInput('');
   };
 
+  const terminalBodyRef = useRef(null);
+
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (terminalBodyRef.current) {
+      terminalBodyRef.current.scrollTop = terminalBodyRef.current.scrollHeight;
+    }
   }, [history]);
 
   return (
@@ -135,7 +139,7 @@ const TerminalWidget = ({ profile, skills = [], projects = [], contactInfo, expe
       </div>
 
       {/* Terminal Screen Body */}
-      <div className="terminal-body">
+      <div className="terminal-body" ref={terminalBodyRef}>
         {history.map((item, idx) => (
           <div key={idx} className={`terminal-line ${item.type}`}>
             {item.type === 'user' && <span className="prompt-text">{item.text}</span>}
@@ -149,7 +153,6 @@ const TerminalWidget = ({ profile, skills = [], projects = [], contactInfo, expe
             )}
           </div>
         ))}
-        <div ref={bottomRef} />
       </div>
 
       {/* Input Prompt Footer */}

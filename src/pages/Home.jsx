@@ -116,8 +116,12 @@ const Home = () => {
   const displayYearsExp = calculatedYearsExp > 0 ? `${calculatedYearsExp}+ Yrs` : '1+ Yrs';
   const displayProjectsCount = projects.length > 0 ? `${projects.length}+` : '0+';
   const displaySkillsCount = skills.length > 0 ? `${skills.length}+` : '0+';
-  const currentCompanyTag = experiences[0]?.company_name ? `@ ${experiences[0].company_name}` : '';
-  const currentRoleSub = experiences[0] ? `${experiences[0].company_name} • ${experiences[0].role}` : (profile?.title || '');
+
+  // Detect current active experience (prefer ongoing/present experience where end_date is null, or fallback to first item)
+  const currentExp = experiences.find(e => !e.end_date) || experiences[0];
+  const activeRole = currentExp?.role || profile?.title || 'AI/ML Engineer';
+  const activeCompany = currentExp?.company_name || '';
+  const currentRoleSub = activeCompany ? `${activeCompany} • ${activeRole}` : activeRole;
 
   // Date formatting helper for experiences and education timelines
   const formatDateRange = (startDate, endDate) => {
@@ -175,7 +179,7 @@ const Home = () => {
 
             <div className="hero-company-tag">
               <Bot size={20} />
-              <span>{profile?.title || "Python AI/ML Developer"} {currentCompanyTag}</span>
+              <span>{activeRole} {activeCompany ? `@ ${activeCompany}` : ''}</span>
             </div>
 
             <p className="hero-bio">
