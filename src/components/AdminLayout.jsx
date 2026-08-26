@@ -2,9 +2,10 @@ import React, { useContext } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { 
-    Layout, LogOut, User, Code, Briefcase, 
-    FolderGit2, Award, BookOpen, Mail, Terminal 
+    LayoutDashboard, LogOut, User, Code2, Briefcase, 
+    FolderGit2, Award, GraduationCap, Mail, Terminal, Home as HomeIcon, ChevronRight
 } from 'lucide-react';
+import '../styles/Home.css';
 
 const AdminLayout = () => {
     const { logout, user } = useContext(AuthContext);
@@ -17,111 +18,148 @@ const AdminLayout = () => {
     };
 
     const navItems = [
-        { path: '/admin', label: 'Dashboard', icon: <Layout size={20} /> },
-        { path: '/admin/profile', label: 'Profile', icon: <User size={20} /> },
-        { path: '/admin/skills', label: 'Skills', icon: <Code size={20} /> },
-        { path: '/admin/experience', label: 'Experience', icon: <Briefcase size={20} /> },
-        { path: '/admin/projects', label: 'Projects', icon: <FolderGit2 size={20} /> },
-        { path: '/admin/education', label: 'Education', icon: <BookOpen size={20} /> },
-        { path: '/admin/certifications', label: 'Certs', icon: <Award size={20} /> },
-        { path: '/admin/contact-info', label: 'My Info', icon: <Terminal size={20} /> }, // Your details
-        { path: '/admin/messages', label: 'Inbox', icon: <Mail size={20} /> }, // Incoming messages
+        { path: '/admin', label: 'Dashboard', icon: <LayoutDashboard size={18} /> },
+        { path: '/admin/profile', label: 'Profile Identity', icon: <User size={18} /> },
+        { path: '/admin/skills', label: 'Tech Skills', icon: <Code2 size={18} /> },
+        { path: '/admin/experience', label: 'Experience Track', icon: <Briefcase size={18} /> },
+        { path: '/admin/projects', label: 'Projects Showcase', icon: <FolderGit2 size={18} /> },
+        { path: '/admin/education', label: 'Education', icon: <GraduationCap size={18} /> },
+        { path: '/admin/certifications', label: 'Certifications', icon: <Award size={18} /> },
+        { path: '/admin/contact-info', label: 'Contact Info', icon: <Terminal size={18} /> },
+        { path: '/admin/messages', label: 'Inbox Messages', icon: <Mail size={18} /> },
     ];
 
-    // --- Styles ---
-    const styles = {
-        container: { display: 'flex', minHeight: '100vh', background: 'var(--bg-primary)' },
-        sidebar: {
-            width: '260px',
-            background: 'var(--bg-secondary)',
-            borderRight: '1px solid #334155',
-            display: 'flex',
-            flexDirection: 'column',
-            padding: '1.5rem',
-            position: 'fixed',
-            height: '100vh',
-            boxSizing: 'border-box'
-        },
-        logo: {
-            color: 'var(--accent-color)',
-            fontSize: '1.2rem',
-            fontWeight: 'bold',
-            marginBottom: '2.5rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px'
-        },
-        nav: { flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' },
-        link: (isActive) => ({
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            padding: '10px 12px',
-            borderRadius: '6px',
-            textDecoration: 'none',
-            color: isActive ? 'var(--bg-primary)' : 'var(--text-secondary)',
-            background: isActive ? 'var(--accent-color)' : 'transparent',
-            fontWeight: isActive ? 'bold' : 'normal',
-            transition: 'all 0.2s',
-            cursor: 'pointer'
-        }),
-        content: {
-            marginLeft: '260px', // Matches sidebar width
-            flex: 1,
-            padding: '2rem',
-            maxWidth: '1200px'
-        },
-        logoutBtn: {
-            marginTop: 'auto',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-            background: 'transparent',
-            border: '1px solid var(--error-color)',
-            color: 'var(--error-color)',
-            padding: '10px',
-            borderRadius: '6px',
-            cursor: 'pointer',
-            width: '100%'
-        }
-    };
-
     return (
-        <div style={styles.container}>
+        <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
+            {/* Ambient Neural Grid */}
+            <div className="neural-background">
+                <div className="neural-grid"></div>
+            </div>
+
             {/* Sidebar */}
-            <div style={styles.sidebar}>
-                <div style={styles.logo}>
-                    <Terminal size={24} />
-                    <span>DEV_PORTAL</span>
+            <aside style={{
+                width: '270px',
+                background: 'var(--bg-card)',
+                borderRight: '1px solid var(--border-color)',
+                backdropFilter: 'blur(16px)',
+                display: 'flex',
+                flexDirection: 'column',
+                padding: '1.5rem 1.25rem',
+                position: 'fixed',
+                height: '100vh',
+                boxSizing: 'border-box',
+                zIndex: 10
+            }}>
+                {/* Brand Header */}
+                <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.75rem',
+                    marginBottom: '2rem',
+                    paddingBottom: '1rem',
+                    borderBottom: '1px solid var(--border-color)'
+                }}>
+                    <img 
+                        src="/favicon.svg" 
+                        alt="KT Logo" 
+                        style={{
+                            width: '36px',
+                            height: '36px',
+                            borderRadius: '10px',
+                            boxShadow: '0 0 15px rgba(0, 242, 254, 0.4)'
+                        }} 
+                    />
+                    <div>
+                        <div style={{ fontWeight: '800', fontSize: '1.1rem' }}>
+                            Kuldeep<span style={{ color: 'var(--accent-cyan)' }}>.Admin</span>
+                        </div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                            Control Panel v2.0
+                        </div>
+                    </div>
                 </div>
-                
-                <nav style={styles.nav}>
+
+                {/* Navigation Items */}
+                <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.4rem', overflowY: 'auto' }}>
                     {navItems.map((item) => {
                         const isActive = location.pathname === item.path;
                         return (
                             <Link 
                                 key={item.path} 
                                 to={item.path} 
-                                style={styles.link(isActive)}
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    padding: '0.7rem 1rem',
+                                    borderRadius: '12px',
+                                    textDecoration: 'none',
+                                    color: isActive ? '#000' : 'var(--text-secondary)',
+                                    background: isActive 
+                                        ? 'linear-gradient(135deg, var(--accent-cyan), var(--accent-blue))' 
+                                        : 'transparent',
+                                    fontWeight: isActive ? '700' : '600',
+                                    fontSize: '0.9rem',
+                                    transition: 'all 0.2s ease',
+                                    boxShadow: isActive ? 'var(--glow-cyan)' : 'none'
+                                }}
                             >
-                                {item.icon}
-                                <span>{item.label}</span>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                    {item.icon}
+                                    <span>{item.label}</span>
+                                </div>
+                                {isActive && <ChevronRight size={16} />}
                             </Link>
                         );
                     })}
                 </nav>
 
-                <button onClick={handleLogout} style={styles.logoutBtn}>
-                    <LogOut size={18} />
-                    <span>Terminate Session</span>
-                </button>
-            </div>
+                {/* Bottom Actions: View Site & Logout */}
+                <div style={{ paddingTop: '1rem', borderTop: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                    <button 
+                        onClick={() => navigate('/')} 
+                        className="btn-secondary"
+                        style={{ width: '100%', justifyContent: 'center', fontSize: '0.85rem', padding: '0.6rem' }}
+                    >
+                        <HomeIcon size={16} />
+                        <span>Public Site</span>
+                    </button>
+
+                    <button 
+                        onClick={handleLogout} 
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '0.6rem',
+                            padding: '0.65rem',
+                            borderRadius: '12px',
+                            background: 'rgba(239, 68, 68, 0.1)',
+                            border: '1px solid rgba(239, 68, 68, 0.3)',
+                            color: '#ef4444',
+                            fontWeight: '700',
+                            fontSize: '0.85rem',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s'
+                        }}
+                    >
+                        <LogOut size={16} />
+                        <span>Terminate Session</span>
+                    </button>
+                </div>
+            </aside>
 
             {/* Main Content Area */}
-            <div style={styles.content}>
-                {/* <Outlet /> renders the specific page (Profile, Skills, etc.) here */}
+            <main style={{
+                marginLeft: '270px',
+                flex: 1,
+                padding: '2.5rem',
+                position: 'relative',
+                zIndex: 1,
+                maxWidth: '1200px'
+            }}>
                 <Outlet />
-            </div>
+            </main>
         </div>
     );
 };

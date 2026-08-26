@@ -1,36 +1,24 @@
-import React, { useState, useEffect } from "react";
-import {
-  Github,
-  Linkedin,
-  Twitter,
-  Code2,
-  Mail,
-  Phone,
-  MapPin,
-  ExternalLink,
-  Download,
-  Send,
-  Briefcase,
-  GraduationCap,
-  Award,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
-import {
-  getProfile,
-  getSkills,
-  getExperiences,
-  getProjects,
+import React, { useState, useEffect } from 'react';
+import { 
+  getProfile, 
+  getSkills, 
+  getExperiences, 
+  getProjects, 
   getCertifications,
-  getEducation,
+  getEducation, 
   getContactInfo,
-  submitContact,
-} from "../services/portfolioApi";
-import "../styles/Home.css";
+  submitContact as sendContactMessage 
+} from '../services/portfolioApi';
+import TerminalWidget from '../components/TerminalWidget';
+import { getMediaUrl } from '../services/api';
+import { 
+  Cpu, Sparkles, Terminal, Code2, Briefcase, GraduationCap, Mail, Phone, 
+  MapPin, ExternalLink, Github, Linkedin, Twitter, CheckCircle2, ArrowRight, 
+  Layers, Bot, Database, Zap, Send, MessageSquare, Award, ShieldCheck, UserCheck, Camera, FileText
+} from 'lucide-react';
+import '../styles/Home.css';
 
 const Home = () => {
-  // State management
-  const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState(null);
   const [skills, setSkills] = useState([]);
   const [experiences, setExperiences] = useState([]);
@@ -38,871 +26,583 @@ const Home = () => {
   const [certifications, setCertifications] = useState([]);
   const [education, setEducation] = useState([]);
   const [contactInfo, setContactInfo] = useState(null);
-  const [currentSkillIndex, setCurrentSkillIndex] = useState(0);
-  const SKILLS_PER_PAGE = 3;
-  const [currentProjectIndex, setCurrentProjectIndex] = useState(0);
-  const PROJECTS_PER_PAGE = 2;
-  const [currentCertificationIndex, setCurrentCertificationIndex] = useState(0);
-  const CERTIFICATIONS_PER_PAGE = 3;
+  const [loading, setLoading] = useState(true);
 
-  // Form state
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    message: "",
-  });
-  const [formStatus, setFormStatus] = useState({ type: "", message: "" });
-  const [submitting, setSubmitting] = useState(false);
+  // Filter States
+  const [activeProjectCategory, setActiveProjectCategory] = useState('ALL');
+  const [activeSkillCategory, setActiveSkillCategory] = useState('AI');
 
-  // Fetch all data on component mount
+  // Contact Form State
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [formStatus, setFormStatus] = useState({ submitting: false, success: false, error: null });
+
   useEffect(() => {
-    const fetchAllData = async () => {
+    const fetchData = async () => {
+      setLoading(true);
       try {
-        setLoading(true);
-        const [
-          profileData,
-          skillsData,
-          experiencesData,
-          projectsData,
-          certificationsData,
-          educationData,
-          contactInfoData,
-        ] = await Promise.all([
+        const [profData, skData, expData, projData, certData, eduData, cInfoData] = await Promise.all([
           getProfile().catch(() => null),
           getSkills().catch(() => []),
           getExperiences().catch(() => []),
           getProjects().catch(() => []),
           getCertifications().catch(() => []),
           getEducation().catch(() => []),
-          getContactInfo().catch(() => null),
+          getContactInfo().catch(() => null)
         ]);
 
-        setProfile(profileData);
-        setSkills(skillsData);
-        setExperiences(experiencesData);
-        setProjects(projectsData);
-        setCertifications(certificationsData);
-        setEducation(educationData);
-        setContactInfo(contactInfoData);
-      } catch (error) {
-        console.error("Error fetching portfolio data:", error);
+        if (profData) setProfile(Array.isArray(profData) ? profData[0] : profData);
+        if (skData) setSkills(skData);
+        if (expData) setExperiences(expData);
+        if (projData) setProjects(projData);
+        if (certData) setCertifications(certData);
+        if (eduData) setEducation(eduData);
+        if (cInfoData) setContactInfo(Array.isArray(cInfoData) ? cInfoData[0] : cInfoData);
+      } catch (err) {
+        console.error("Error fetching data for home page:", err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchAllData();
+    fetchData();
   }, []);
 
-  // Group skills by category
-  const groupedSkills = skills.reduce((acc, skill) => {
-    const category = skill.category || "OTHER";
-    if (!acc[category]) acc[category] = [];
-    acc[category].push(skill);
-    return acc;
-  }, {});
-
-  const categoryNames = {
-    LANG: "Programming Languages",
-    WEB: "Web Technologies",
-    AI: "AI/ML Technologies",
-    SOFT: "Soft Skills",
-    OTHER: "Other Skills",
-  };
-
-  // Handle form input changes
-  const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  // Handle form submission
-  const handleSubmit = async (e) => {
+  const handleContactSubmit = async (e) => {
     e.preventDefault();
-    setSubmitting(true);
-    setFormStatus({ type: "", message: "" });
+    if (!formData.name || !formData.email || !formData.message) return;
 
+    setFormStatus({ submitting: true, success: false, error: null });
     try {
-      await submitContact(formData);
-      setFormStatus({
-        type: "success",
-        message: "Message sent successfully! I'll get back to you soon.",
-      });
-      setFormData({ name: "", email: "", message: "" });
-    } catch (error) {
-      setFormStatus({
-        type: "error",
-        message: "Failed to send message. Please try again.",
-      });
-    } finally {
-      setSubmitting(false);
+      await sendContactMessage(formData);
+      setFormStatus({ submitting: false, success: true, error: null });
+      setFormData({ name: '', email: '', message: '' });
+      setTimeout(() => setFormStatus({ submitting: false, success: false, error: null }), 5000);
+    } catch (err) {
+      console.error("Error sending message:", err);
+      setFormStatus({ submitting: false, success: false, error: "Failed to send message. Please try again." });
     }
   };
 
-  // Format date
-  const formatDate = (dateString) => {
-    if (!dateString) return "Present";
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-    });
-  };
+  // Category Filtering for Projects
+  const filteredProjects = projects.filter((proj) => {
+    if (activeProjectCategory === 'ALL') return true;
+    const title = proj.title.toLowerCase();
+    const stack = (proj.tech_stack || '').toLowerCase();
 
-  // Scroll to section
-  const scrollToSection = (sectionId) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
-  };
+    if (activeProjectCategory === 'VOICE') return title.includes('voice') || stack.includes('livekit') || stack.includes('webrtc');
+    if (activeProjectCategory === 'RAG') return title.includes('health') || title.includes('rag') || stack.includes('biomistral') || stack.includes('chromadb');
+    if (activeProjectCategory === 'CV') return title.includes('plant') || stack.includes('opencv') || stack.includes('tensorflow');
+    if (activeProjectCategory === 'ML') return title.includes('recommendation') || title.includes('prediction') || stack.includes('knn') || stack.includes('random forest');
+    if (activeProjectCategory === 'WEB') return title.includes('management') || title.includes('to-do') || stack.includes('django') || stack.includes('flask');
+    return true;
+  });
 
-  // Carousel helper functions
-  const chunkArray = (array, size) => {
-    const chunks = [];
-    for (let i = 0; i < array.length; i += size) {
-      chunks.push(array.slice(i, i + size));
-    }
-    return chunks;
-  };
-
-  // Group skills into cards of 5 skills each
-  const skillCards = Object.entries(groupedSkills).flatMap(
-    ([category, categorySkills]) => {
-      const chunks = chunkArray(categorySkills, 5);
-      return chunks.map((chunk, index) => ({
-        category,
-        skills: chunk,
-        cardIndex: index,
-        totalCards: chunks.length,
-      }));
-    },
-  );
-
-  // Pagination for skills
-  const totalSkillPages = Math.ceil(skillCards.length / SKILLS_PER_PAGE);
-  const visibleSkillCards = skillCards.slice(
-    currentSkillIndex * SKILLS_PER_PAGE,
-    (currentSkillIndex + 1) * SKILLS_PER_PAGE,
-  );
-
-  const nextSkillPage = () => {
-    setCurrentSkillIndex((prev) => (prev + 1) % totalSkillPages);
-  };
-
-  const prevSkillPage = () => {
-    setCurrentSkillIndex(
-      (prev) => (prev - 1 + totalSkillPages) % totalSkillPages,
-    );
-  };
-
-  // Pagination for projects
-  const totalProjectPages = Math.ceil(projects.length / PROJECTS_PER_PAGE);
-  const visibleProjectCards = projects.slice(
-    currentProjectIndex * PROJECTS_PER_PAGE,
-    (currentProjectIndex + 1) * PROJECTS_PER_PAGE,
-  );
-
-  const nextProjectPage = () => {
-    setCurrentProjectIndex((prev) => (prev + 1) % totalProjectPages);
-  };
-
-  const prevProjectPage = () => {
-    setCurrentProjectIndex(
-      (prev) => (prev - 1 + totalProjectPages) % totalProjectPages,
-    );
-  };
-
-  // Pagination for certifications
-  const totalCertificationPages = Math.ceil(
-    certifications.length / CERTIFICATIONS_PER_PAGE,
-  );
-  const visibleCertifications = certifications.slice(
-    currentCertificationIndex * CERTIFICATIONS_PER_PAGE,
-    (currentCertificationIndex + 1) * CERTIFICATIONS_PER_PAGE,
-  );
-
-  const nextCertificationPage = () => {
-    setCurrentCertificationIndex(
-      (prev) => (prev + 1) % totalCertificationPages,
-    );
-  };
-
-  const prevCertificationPage = () => {
-    setCurrentCertificationIndex(
-      (prev) => (prev - 1 + totalCertificationPages) % totalCertificationPages,
-    );
-  };
-
-  if (loading) {
-    return (
-      <div className="loading-container">
-        <div className="spinner"></div>
-        <p style={{ color: "var(--text-secondary)" }}>Loading portfolio...</p>
-      </div>
-    );
-  }
+  // Category Filtering for Skills
+  const filteredSkills = skills.filter((sk) => {
+    if (activeSkillCategory === 'ALL') return true;
+    return sk.category === activeSkillCategory;
+  });
 
   return (
     <div className="home-container">
-      {/* HERO SECTION */}
-      <section id="profile" className="hero-section section">
-        <div className="section-content hero-content">
-          {profile?.profile_picture && (
-            <div className="profile-image-container">
-              <img
-                src={profile.profile_picture}
-                alt={profile.name}
-                className="profile-image"
-              />
-            </div>
-          )}
+      {/* Ambient Neural Grid & Glow Effect */}
+      <div className="neural-background">
+        <div className="neural-grid"></div>
+      </div>
 
-          <h1 className="hero-title">Hi, I'm {profile?.name || "Your Name"}</h1>
+      <div className="content-wrapper">
 
-          <p className="hero-subtitle">
-            {profile?.title || "Full Stack Developer"}
-          </p>
-
-          <p className="hero-bio">
-            {profile?.bio ||
-              "Passionate developer creating amazing web experiences."}
-          </p>
-
-          <div className="hero-buttons">
-            <button
-              className="btn btn-primary"
-              onClick={() => scrollToSection("projects")}
-            >
-              <Briefcase size={20} />
-              View Projects
-            </button>
-            <button
-              className="btn btn-secondary"
-              onClick={() => scrollToSection("contact")}
-            >
-              <Mail size={20} />
-              Contact Me
-            </button>
-            {profile?.resume && (
-              <a href={profile.resume} className="btn btn-secondary" download>
-                <Download size={20} />
-                Download Resume
-              </a>
-            )}
-          </div>
-
-          <div className="social-links">
-            {profile?.github_link && (
-              <a
-                href={profile.github_link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="social-link"
-              >
-                <Github size={24} />
-              </a>
-            )}
-            {profile?.linkedin_link && (
-              <a
-                href={profile.linkedin_link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="social-link"
-              >
-                <Linkedin size={24} />
-              </a>
-            )}
-            {profile?.twitter_link && (
-              <a
-                href={profile.twitter_link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="social-link"
-              >
-                <Twitter size={24} />
-              </a>
-            )}
-            {profile?.leetcode_link && (
-              <a
-                href={profile.leetcode_link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="social-link"
-              >
-                <Code2 size={24} />
-              </a>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* SKILLS SECTION */}
-      {skills.length > 0 && (
-        <section
-          id="skills"
-          className="section"
-          style={{ background: "var(--bg-secondary)" }}
-        >
-          <div className="section-content">
-            <div className="section-header">
-              <h2 className="section-title">Skills & Expertise</h2>
-              <p className="section-description">
-                Technologies and tools I work with
-              </p>
-            </div>
-
-            <div className="carousel-container">
-              <button
-                className="carousel-btn carousel-btn-left"
-                onClick={prevSkillPage}
-                disabled={totalSkillPages <= 1}
-                aria-label="Previous skills"
-              >
-                <ChevronLeft size={24} />
-              </button>
-
-              <div className="skills-carousel-grid">
-                {visibleSkillCards.map((card, index) => (
-                  <div
-                    key={`${card.category}-${index}`}
-                    className="skill-category"
-                  >
-                    <h3 className="category-title">
-                      {categoryNames[card.category] || card.category}
-                      {card.totalCards > 1 &&
-                        ` (${card.cardIndex + 1}/${card.totalCards})`}
-                    </h3>
-                    {card.skills.map((skill) => (
-                      <div key={skill.id} className="skill-item">
-                        <div className="skill-name">
-                          <span>{skill.name}</span>
-                          <span className="skill-percentage">
-                            {skill.percentage}%
-                          </span>
-                        </div>
-                        <div className="skill-bar">
-                          <div
-                            className="skill-progress"
-                            style={{ width: `${skill.percentage}%` }}
-                          ></div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ))}
-              </div>
-
-              <button
-                className="carousel-btn carousel-btn-right"
-                onClick={nextSkillPage}
-                disabled={totalSkillPages <= 1}
-                aria-label="Next skills"
-              >
-                <ChevronRight size={24} />
-              </button>
-            </div>
-
-            {totalSkillPages > 1 && (
-              <div className="carousel-indicators">
-                {Array.from({ length: totalSkillPages }).map((_, index) => (
-                  <div
-                    key={index}
-                    className={`carousel-indicator ${
-                      index === currentSkillIndex ? "active" : ""
-                    }`}
-                    onClick={() => setCurrentSkillIndex(index)}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
-      )}
-
-      {/* EXPERIENCE SECTION */}
-      {experiences.length > 0 && (
-        <section id="experience" className="section">
-          <div className="section-content">
-            <div className="section-header">
-              <h2 className="section-title">Work Experience</h2>
-              <p className="section-description">
-                My professional journey and accomplishments
-              </p>
-            </div>
-
-            <div className="timeline">
-              {[...experiences]
-                .sort((a, b) => new Date(b.start_date) - new Date(a.start_date))
-                .map((exp, index) => (
-                  <div key={exp.id} className="timeline-item">
-                    <div className="timeline-marker"></div>
-                    <div className="timeline-content">
-                      {exp.logo && (
-                        <img
-                          src={exp.logo}
-                          alt={exp.company_name}
-                          className="company-logo"
-                        />
-                      )}
-                      <h3 className="experience-role">{exp.role}</h3>
-                      <p className="experience-company">{exp.company_name}</p>
-                      <p className="experience-date">
-                        {formatDate(exp.start_date)} -{" "}
-                        {formatDate(exp.end_date)}
-                      </p>
-                      <p className="experience-description">
-                        {exp.description}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* PROJECTS SECTION */}
-      {projects.length > 0 && (
-        <section
-          id="projects"
-          className="section"
-          style={{ background: "var(--bg-secondary)" }}
-        >
-          <div className="section-content">
-            <div className="section-header">
-              <h2 className="section-title">Featured Projects</h2>
-              <p className="section-description">
-                Some of my recent work and side projects
-              </p>
-            </div>
-            <div className="carousel-container">
-              <button
-                className="carousel-btn carousel-btn-left"
-                onClick={prevProjectPage}
-                disabled={totalProjectPages <= 1}
-                aria-label="Previous projects"
-              >
-                <ChevronLeft size={24} />
-              </button>
-
-              <div className="projects-grid">
-                {visibleProjectCards.map((project) => (
-                  <div key={project.id} className="project-card">
-                    {project.image && (
-                      <img
-                        src={project.image}
-                        alt={project.title}
-                        className="project-image"
-                      />
-                    )}
-                    <div className="project-info">
-                      <h3 className="project-title">{project.title}</h3>
-                      <p className="project-description">
-                        {project.description}
-                      </p>
-
-                      {/* Tech Stack Badges */}
-                      <div
-                        className="project-tech-stack"
-                        style={{
-                          display: "flex",
-                          flexWrap: "wrap",
-                          gap: "8px",
-                          marginBottom: "1rem",
-                        }}
-                      >
-                        {(project.tech_stack || "")
-                          .split(",")
-                          .filter((t) => t.trim() !== "")
-                          .map((tech, i) => (
-                            <span
-                              key={i}
-                              className="tech-badge"
-                              style={{
-                                fontSize: "0.75rem",
-                                background: "rgba(56, 189, 248, 0.1)",
-                                color: "#38bdf8",
-                                padding: "2px 8px",
-                                borderRadius: "4px",
-                                border: "1px solid rgba(56, 189, 248, 0.2)",
-                              }}
-                            >
-                              {tech.trim()}
-                            </span>
-                          ))}
-                      </div>
-
-                      <div
-                        className="project-links"
-                        style={{ display: "flex", gap: "15px" }}
-                      >
-                        {project.github_link && (
-                          <a
-                            href={project.github_link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="project-link"
-                          >
-                            <Github size={16} /> Code
-                          </a>
-                        )}
-                        {project.live_url && (
-                          <a
-                            href={project.live_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="project-link"
-                          >
-                            <ExternalLink size={16} /> Live Demo
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <button
-                className="carousel-btn carousel-btn-right"
-                onClick={nextProjectPage}
-                disabled={totalProjectPages <= 1}
-                aria-label="Next projects"
-              >
-                <ChevronRight size={24} />
-              </button>
-            </div>
-            {totalProjectPages > 1 && (
-              <div className="carousel-indicators">
-                {Array.from({ length: totalProjectPages }).map((_, index) => (
-                  <div
-                    key={index}
-                    className={`carousel-indicator ${
-                      index === currentProjectIndex ? "active" : ""
-                    }`}
-                    onClick={() => setCurrentProjectIndex(index)}
-                  />
-                ))}
-              </div>
-            )}{" "}
-          </div>
-        </section>
-      )}
-
-      {/* EDUCATION SECTION */}
-      {education.length > 0 && (
-        <section id="education" className="section">
-          <div className="section-content">
-            <div className="section-header">
-              <h2 className="section-title">Education</h2>
-              <p className="section-description">
-                My academic background and qualifications
-              </p>
-            </div>
-
-            <div className="timeline">
-              {education.map((edu, index) => (
-                <div key={edu.id} className="timeline-item">
-                  <div className="timeline-marker"></div>
-                  <div className="timeline-content">
-                    <GraduationCap
-                      size={40}
-                      style={{
-                        color: "var(--accent-color)",
-                        marginBottom: "1rem",
-                      }}
-                    />
-                    <h3 className="education-degree">{edu.degree}</h3>
-                    <p className="education-institution">{edu.institution}</p>
-                    <p className="education-date">
-                      {formatDate(edu.start_date)} - {formatDate(edu.end_date)}
-                    </p>
-                    <p className="education-description">{edu.description}</p>
-                  </div>
+        {/* ================= HERO SECTION ================= */}
+        <section id="about" className="hero-section">
+          <div className="hero-content">
+            {/* Status & Profile Photo Avatar Header */}
+            <div className="hero-profile-avatar-wrapper">
+              {profile?.profile_picture ? (
+                <img
+                  src={getMediaUrl(profile.profile_picture)}
+                  alt={profile?.name || 'Kuldeep Tapodhan'}
+                  className="hero-profile-img"
+                />
+              ) : (
+                <div className="hero-avatar-placeholder" title="Upload your photo via Admin Panel">
+                  <UserCheck size={48} />
                 </div>
-              ))}
+              )}
+
+              <div>
+                <div className="status-pill" style={{ marginBottom: '0.4rem' }}>
+                  <span className="pulse-dot"></span>
+                  <span>Available for AI Engineering</span>
+                </div>
+                <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                  Amenity Technologies • AI/ML Developer
+                </div>
+              </div>
+            </div>
+
+            <h1 className="hero-title">
+              Hi, I'm <span className="gradient-text">{profile?.name || "Kuldeep Tapodhan"}</span>
+            </h1>
+
+            <div className="hero-company-tag">
+              <Bot size={20} />
+              <span>{profile?.title || "Python AI/ML Developer"} @ Amenity Technologies</span>
+            </div>
+
+            <p className="hero-bio">
+              {profile?.bio || 
+                "AI & Machine Learning Developer with hands-on experience in building intelligent, scalable applications powered by LLMs, RAG pipelines, multi-agent voice systems, and computer vision models."
+              }
+            </p>
+
+            {/* Quick Metrics */}
+            <div className="metrics-row">
+              <div className="metric-card">
+                <span className="metric-number">1+ Yrs</span>
+                <span className="metric-label">Industry Exp.</span>
+              </div>
+              <div className="metric-card">
+                <span className="metric-number">8+</span>
+                <span className="metric-label">AI/ML Projects</span>
+              </div>
+              <div className="metric-card">
+                <span className="metric-number">33+</span>
+                <span className="metric-label">Tech & Models</span>
+              </div>
+            </div>
+
+            {/* CTA Action Buttons */}
+            <div className="hero-cta-group">
+              <a href="#projects" className="btn-primary">
+                <span>Explore Projects</span>
+                <ArrowRight size={18} />
+              </a>
+              <a href="#contact" className="btn-secondary">
+                <Mail size={18} />
+                <span>Get In Touch</span>
+              </a>
             </div>
           </div>
-        </section>
-      )}
 
-      {/* CERTIFICATIONS SECTION */}
-      {certifications.length > 0 && (
-        <section
-          id="certifications"
-          className="section"
-          style={{ background: "var(--bg-secondary)" }}
-        >
-          <div className="section-content">
-            <div className="section-header">
-              <h2 className="section-title">Certifications</h2>
-              <p className="section-description">
-                Professional certifications and achievements
-              </p>
-            </div>
-
-            <div className="carousel-container">
-              <button
-                className="carousel-btn carousel-btn-left"
-                onClick={prevCertificationPage}
-                disabled={totalCertificationPages <= 1}
-                aria-label="Previous certifications"
-              >
-                <ChevronLeft size={24} />
-              </button>
-
-              <div className="certifications-grid">
-                {visibleCertifications.map((cert) => (
-                  <div
-                    key={cert.id}
-                    className="certification-card"
-                    onClick={() =>
-                      cert.pdf_file && window.open(cert.pdf_file, "_blank")
-                    }
-                    style={{ cursor: "pointer" }}
-                  >
-                    {cert.image ? (
-                      <img
-                        src={cert.image}
-                        alt={cert.title}
-                        className="certification-image"
-                      />
-                    ) : (
-                      <div
-                        style={{
-                          height: "220px",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          background: "var(--bg-primary)",
-                        }}
-                      >
-                        <Award
-                          size={60}
-                          style={{ color: "var(--accent-color)" }}
-                        />
-                      </div>
-                    )}
-                    <div className="certification-info">
-                      <h3 className="certification-title">{cert.title}</h3>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <button
-                className="carousel-btn carousel-btn-right"
-                onClick={nextCertificationPage}
-                disabled={totalCertificationPages <= 1}
-                aria-label="Next certifications"
-              >
-                <ChevronRight size={24} />
-              </button>
-            </div>
-
-            {totalCertificationPages > 1 && (
-              <div className="carousel-indicators">
-                {Array.from({ length: totalCertificationPages }).map(
-                  (_, index) => (
-                    <div
-                      key={index}
-                      className={`carousel-indicator ${
-                        index === currentCertificationIndex ? "active" : ""
-                      }`}
-                      onClick={() => setCurrentCertificationIndex(index)}
-                    />
-                  ),
-                )}
-              </div>
-            )}
+          {/* Right Hero Side: Interactive Terminal Widget */}
+          <div className="hero-terminal-wrapper">
+            <TerminalWidget />
           </div>
         </section>
-      )}
 
-      {/* CONTACT SECTION */}
-      <section id="contact" className="section">
-        <div className="section-content">
+        {/* ================= BENTO GRID PROJECTS SECTION ================= */}
+        <section id="projects" style={{ paddingTop: '2rem' }}>
           <div className="section-header">
-            <h2 className="section-title">Get In Touch</h2>
-            <p className="section-description">
-              Have a question or want to work together? Feel free to reach out!
+            <div className="section-badge">
+              <Layers size={14} />
+              <span>Featured Work</span>
+            </div>
+            <h2 className="section-title">AI & Engineering Projects</h2>
+            <p className="section-subtitle">
+              Production-grade Multi-Agent Voice Systems, Fine-Tuned LLM RAG Pipelines, Computer Vision, and Full-Stack Machine Learning.
             </p>
           </div>
 
-          <div className="contact-container">
-            {/* Contact Information */}
-            <div className="contact-info-box">
-              <h3 className="contact-info-title">Contact Information</h3>
-
-              {contactInfo?.description && (
-                <p
-                  style={{
-                    marginBottom: "2rem",
-                    color: "var(--text-secondary)",
-                    lineHeight: "1.6",
-                  }}
-                >
-                  {contactInfo.description}
-                </p>
-              )}
-
-              {(contactInfo?.email || profile?.email) && (
-                <div className="contact-detail">
-                  <div className="contact-icon">
-                    <Mail size={20} />
-                  </div>
-                  <div>
-                    <strong>Email</strong>
-                    <p>{contactInfo?.email || profile?.email}</p>
-                  </div>
-                </div>
-              )}
-
-              {(contactInfo?.phone || profile?.phone) && (
-                <div className="contact-detail">
-                  <div className="contact-icon">
-                    <Phone size={20} />
-                  </div>
-                  <div>
-                    <strong>Phone</strong>
-                    <p>{contactInfo?.phone || profile?.phone}</p>
-                  </div>
-                </div>
-              )}
-
-              {(contactInfo?.address || profile?.address) && (
-                <div className="contact-detail">
-                  <div className="contact-icon">
-                    <MapPin size={20} />
-                  </div>
-                  <div>
-                    <strong>Address</strong>
-                    <p>{contactInfo?.address || profile?.address}</p>
-                  </div>
-                </div>
-              )}
-
-              <div
-                className="social-links"
-                style={{ marginTop: "2rem", justifyContent: "flex-start" }}
+          {/* Filter Pills */}
+          <div className="filter-pills">
+            {[
+              { id: 'ALL', label: 'All Projects' },
+              { id: 'VOICE', label: '🎙️ Voice AI & Multi-Agent' },
+              { id: 'RAG', label: '🏥 RAG & Healthcare' },
+              { id: 'CV', label: '🌿 Computer Vision & Mobile' },
+              { id: 'ML', label: '🤖 Machine Learning' },
+              { id: 'WEB', label: '⚡ Web Apps & APIs' }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                className={`filter-pill ${activeProjectCategory === tab.id ? 'active' : ''}`}
+                onClick={() => setActiveProjectCategory(tab.id)}
               >
-                {profile?.github_link && (
-                  <a
-                    href={profile.github_link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="social-link"
-                  >
-                    <Github size={24} />
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Bento Grid */}
+          <div className="bento-grid">
+            {filteredProjects.map((project, idx) => {
+              const isFeatured = idx === 0 || idx === 1;
+              return (
+                <div
+                  key={project.id || idx}
+                  className={`bento-card ${isFeatured ? 'featured' : ''}`}
+                >
+                  <div>
+                    <div className="bento-badge">
+                      <Sparkles size={12} />
+                      <span>{isFeatured ? 'Flagship Project' : 'Production Build'}</span>
+                    </div>
+                    <h3 className="project-title">{project.title}</h3>
+                    <p className="project-description">{project.description}</p>
+                  </div>
+
+                  <div>
+                    {project.tech_stack && (
+                      <div className="tech-tags">
+                        {project.tech_stack.split(',').map((tech, tIdx) => (
+                          <span key={tIdx} className="tech-tag">
+                            {tech.trim()}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                    <div className="project-links">
+                      {project.github_link && (
+                        <a
+                          href={project.github_link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="project-link-btn"
+                        >
+                          <Github size={16} />
+                          <span>Code Repository</span>
+                        </a>
+                      )}
+                      {project.live_url && (
+                        <a
+                          href={project.live_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="project-link-btn"
+                        >
+                          <ExternalLink size={16} />
+                          <span>Live Demo</span>
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* ================= SKILLS MATRIX SECTION ================= */}
+        <section id="skills" style={{ paddingTop: '4rem' }}>
+          <div className="section-header">
+            <div className="section-badge">
+              <Cpu size={14} />
+              <span>Tech Matrix</span>
+            </div>
+            <h2 className="section-title">Skills & Capabilities</h2>
+            <p className="section-subtitle">
+              Comprehensive technical expertise across AI Models, Multi-Agent Frameworks, Backend Development, and DevOps.
+            </p>
+          </div>
+
+          {/* Category Tabs */}
+          <div className="skills-category-tabs">
+            {[
+              { id: 'AI', label: '🤖 AI / ML & LLMs', icon: Bot },
+              { id: 'WEB', label: '⚡ Backend & Frameworks', icon: Zap },
+              { id: 'LANG', label: '🌐 Languages & Web', icon: Code2 },
+              { id: 'SOFT', label: '🛠️ DevOps & Infrastructure', icon: Database }
+            ].map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  className={`skill-tab-btn ${activeSkillCategory === tab.id ? 'active' : ''}`}
+                  onClick={() => setActiveSkillCategory(tab.id)}
+                >
+                  <Icon size={16} />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Skills Grid */}
+          <div className="skills-grid">
+            {filteredSkills.map((skill, idx) => (
+              <div key={skill.id || idx} className="skill-card">
+                <div className="skill-info">
+                  <span className="skill-name">{skill.name}</span>
+                  <span className="skill-percent">{skill.percentage}%</span>
+                </div>
+                <div className="progress-bar-bg">
+                  <div
+                    className="progress-bar-fill"
+                    style={{ width: `${skill.percentage}%` }}
+                  ></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ================= WORK EXPERIENCE SECTION ================= */}
+        <section id="experience" style={{ paddingTop: '4rem' }}>
+          <div className="section-header">
+            <div className="section-badge">
+              <Briefcase size={14} />
+              <span>Work History</span>
+            </div>
+            <h2 className="section-title">Professional Experience</h2>
+            <p className="section-subtitle">
+              Hands-on engineering experience building production AI/ML applications, multi-agent voice systems, and backend frameworks.
+            </p>
+          </div>
+
+          <div className="timeline-container">
+            {experiences.map((exp, idx) => (
+              <div key={exp.id || idx} className="timeline-item">
+                <div className="timeline-node experience-node"></div>
+                <div className="timeline-card">
+                  <div className="timeline-header">
+                    <div>
+                      <span className="timeline-role">{exp.role}</span>
+                      <div className="timeline-company">@ {exp.company_name}</div>
+                    </div>
+                    <span className="timeline-date">
+                      {exp.start_date ? new Date(exp.start_date).getFullYear() : '2024'} - Present
+                    </span>
+                  </div>
+                  <p className="timeline-desc">{exp.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ================= EDUCATION SECTION ================= */}
+        <section id="education" style={{ paddingTop: '4rem' }}>
+          <div className="section-header">
+            <div className="section-badge" style={{ background: 'rgba(129, 140, 248, 0.12)', borderColor: 'rgba(129, 140, 248, 0.3)', color: 'var(--accent-indigo)' }}>
+              <GraduationCap size={14} />
+              <span>Academic Background</span>
+            </div>
+            <h2 className="section-title">Education & Qualifications</h2>
+            <p className="section-subtitle">
+              Academic foundation in computer science, software engineering principles, and specialized technology coursework.
+            </p>
+          </div>
+
+          <div className="timeline-container">
+            {education.map((edu, idx) => (
+              <div key={edu.id || idx} className="timeline-item">
+                <div className="timeline-node education-node"></div>
+                <div className="timeline-card">
+                  <div className="timeline-header">
+                    <div>
+                      <span className="timeline-role">{edu.degree}</span>
+                      <div className="timeline-company edu">{edu.institution}</div>
+                    </div>
+                    <span className="timeline-date edu">
+                      {edu.start_date ? new Date(edu.start_date).getFullYear() : '2022'} - {edu.end_date ? new Date(edu.end_date).getFullYear() : '2026'}
+                    </span>
+                  </div>
+                  <p className="timeline-desc">{edu.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ================= CERTIFICATIONS SECTION ================= */}
+        <section id="certifications" style={{ paddingTop: '4rem' }}>
+          <div className="section-header">
+            <div className="section-badge" style={{ background: 'rgba(16, 185, 129, 0.12)', borderColor: 'rgba(16, 185, 129, 0.3)', color: '#10b981' }}>
+              <Award size={14} />
+              <span>Credentials</span>
+            </div>
+            <h2 className="section-title">Certifications & Achievements</h2>
+            <p className="section-subtitle">
+              Verified certifications in Machine Learning, Cloud Computing, Python Data Science, and SQL Engineering.
+            </p>
+          </div>
+
+          <div className="certifications-grid">
+            {certifications.map((cert, idx) => {
+              const fileUrl = cert.pdf_file || cert.image;
+              const hasFile = Boolean(fileUrl);
+              const fullUrl = hasFile ? getMediaUrl(fileUrl) : null;
+
+              return (
+                <div 
+                  key={cert.id || idx} 
+                  className="cert-card"
+                  onClick={() => {
+                    if (fullUrl) {
+                      window.open(fullUrl, '_blank', 'noopener,noreferrer');
+                    } else {
+                      alert(`Certificate "${cert.title}" document can be uploaded via Admin Panel.`);
+                    }
+                  }}
+                  title={hasFile ? `Click to view ${cert.title} PDF / Photo` : 'Click to view certificate'}
+                >
+                  <div className="cert-icon-wrapper">
+                    {cert.pdf_file ? <FileText size={24} /> : <Award size={24} />}
+                  </div>
+                  <div>
+                    <h3 className="cert-title">{cert.title}</h3>
+                    <div className="cert-issuer">AWS / Oracle / Verified Certification</div>
+                    <div className="cert-verified-badge">
+                      <ShieldCheck size={14} />
+                      <span>Verified Credential</span>
+                    </div>
+                    <div className="cert-action-hint">
+                      <span>{hasFile ? 'View PDF / Photo' : 'View Certificate'}</span>
+                      <ExternalLink size={12} />
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* ================= CONTACT SECTION ================= */}
+        <section id="contact" style={{ paddingTop: '4rem' }}>
+          <div className="section-header">
+            <div className="section-badge">
+              <Mail size={14} />
+              <span>Get In Touch</span>
+            </div>
+            <h2 className="section-title">Let's Build Something Intelligent</h2>
+            <p className="section-subtitle">
+              Open for AI/ML Engineering opportunities, Voice Bot development, and RAG Pipeline consultation.
+            </p>
+          </div>
+
+          <div className="contact-grid">
+            {/* Left Contact Info Card */}
+            <div className="contact-info-card">
+              <div className="contact-detail-item">
+                <div className="contact-icon-wrapper">
+                  <Mail size={20} />
+                </div>
+                <div>
+                  <div className="contact-label">Direct Email</div>
+                  <a href={`mailto:${contactInfo?.email || 'kuldeep.tapodhan0306@gmail.com'}`} className="contact-value">
+                    {contactInfo?.email || 'kuldeep.tapodhan0306@gmail.com'}
                   </a>
-                )}
-                {profile?.linkedin_link && (
-                  <a
-                    href={profile.linkedin_link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="social-link"
-                  >
-                    <Linkedin size={24} />
+                </div>
+              </div>
+
+              <div className="contact-detail-item">
+                <div className="contact-icon-wrapper">
+                  <Phone size={20} />
+                </div>
+                <div>
+                  <div className="contact-label">Phone</div>
+                  <a href={`tel:${contactInfo?.phone || '+919016568931'}`} className="contact-value">
+                    {contactInfo?.phone || '+91 9016568931'}
                   </a>
-                )}
-                {profile?.twitter_link && (
-                  <a
-                    href={profile.twitter_link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="social-link"
-                  >
-                    <Twitter size={24} />
-                  </a>
-                )}
-                {profile?.leetcode_link && (
-                  <a
-                    href={profile.leetcode_link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="social-link"
-                  >
-                    <Code2 size={24} />
-                  </a>
-                )}
+                </div>
+              </div>
+
+              <div className="contact-detail-item">
+                <div className="contact-icon-wrapper">
+                  <MapPin size={20} />
+                </div>
+                <div>
+                  <div className="contact-label">Location</div>
+                  <div className="contact-value">{contactInfo?.address || 'Rajkot, Gujarat, India'}</div>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+                <a
+                  href={contactInfo?.github_link || 'https://github.com/Kuldeep-Tapodhan'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-secondary"
+                  style={{ flex: 1, justifyContent: 'center' }}
+                >
+                  <Github size={18} />
+                  <span>GitHub</span>
+                </a>
+                <a
+                  href={contactInfo?.linkedin_link || 'https://www.linkedin.com/in/kuldeep-tapodhan-780701251/'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-secondary"
+                  style={{ flex: 1, justifyContent: 'center' }}
+                >
+                  <Linkedin size={18} />
+                  <span>LinkedIn</span>
+                </a>
               </div>
             </div>
 
-            {/* Contact Form */}
-            <div className="contact-form">
-              <h3 className="contact-info-title">Send a Message</h3>
-
-              {formStatus.message && (
-                <div className={`form-message ${formStatus.type}`}>
-                  {formStatus.message}
-                </div>
-              )}
-
-              <form onSubmit={handleSubmit}>
+            {/* Right Glass Contact Form */}
+            <div className="contact-form-card">
+              <form onSubmit={handleContactSubmit}>
                 <div className="form-group">
-                  <label htmlFor="name" className="form-label">
-                    Name
-                  </label>
+                  <label className="form-label">Your Name</label>
                   <input
                     type="text"
-                    id="name"
-                    name="name"
                     className="form-input"
+                    placeholder="e.g. Sarah Connor"
                     value={formData.name}
-                    onChange={handleInputChange}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     required
                   />
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="email" className="form-label">
-                    Email
-                  </label>
+                  <label className="form-label">Your Email</label>
                   <input
                     type="email"
-                    id="email"
-                    name="email"
                     className="form-input"
+                    placeholder="e.g. sarah@example.com"
                     value={formData.email}
-                    onChange={handleInputChange}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     required
                   />
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="message" className="form-label">
-                    Message
-                  </label>
+                  <label className="form-label">Message</label>
                   <textarea
-                    id="message"
-                    name="message"
                     className="form-textarea"
+                    placeholder="Describe your project, opportunity, or idea..."
                     value={formData.message}
-                    onChange={handleInputChange}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     required
                   ></textarea>
                 </div>
 
                 <button
                   type="submit"
-                  className="btn btn-primary"
-                  disabled={submitting}
-                  style={{ width: "100%" }}
+                  className="btn-primary"
+                  style={{ width: '100%', justifyContent: 'center', marginTop: '0.5rem' }}
+                  disabled={formStatus.submitting}
                 >
-                  {submitting ? (
-                    "Sending..."
+                  {formStatus.submitting ? (
+                    <span>Sending Message...</span>
                   ) : (
                     <>
-                      <Send size={20} />
-                      Send Message
+                      <Send size={18} />
+                      <span>Send Message</span>
                     </>
                   )}
                 </button>
+
+                {formStatus.success && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#10b981', marginTop: '1rem', fontSize: '0.9rem', fontWeight: '600' }}>
+                    <CheckCircle2 size={18} />
+                    <span>Your message has been sent successfully!</span>
+                  </div>
+                )}
+                {formStatus.error && (
+                  <div style={{ color: '#ef4444', marginTop: '1rem', fontSize: '0.9rem' }}>
+                    {formStatus.error}
+                  </div>
+                )}
               </form>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+
+      </div>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Terminal, Sun, Moon, Menu, X } from "lucide-react";
+import { Cpu, Sun, Moon, Menu, X, Sparkles, Terminal, Code2, Briefcase, User, Mail } from "lucide-react";
 import { ThemeContext } from "../context/ThemeContext";
 import { getProfile } from "../services/portfolioApi";
 
@@ -8,6 +8,7 @@ const Navbar = () => {
   const { isDarkMode, toggleTheme } = useContext(ThemeContext);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profile, setProfile] = useState(null);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -21,296 +22,177 @@ const Navbar = () => {
       }
     };
     fetchProfile();
+
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const styles = {
-    nav: {
-      display: "grid",
-      gridTemplateColumns: "auto 1fr auto",
-      alignItems: "center",
-      padding: "1rem 2rem",
-      background: "var(--nav-bg)",
-      borderBottom: "1px solid var(--border-color)",
-      position: "sticky",
-      top: 0,
-      zIndex: 50,
-      backdropFilter: "blur(10px)",
-      transition: "background 0.3s, border-color 0.3s",
-      gap: "1rem",
-    },
-    logo: {
-      fontSize: "1.5rem",
-      fontWeight: "bold",
-      color: "var(--accent-color)",
-      textDecoration: "none",
-      fontFamily: "monospace",
-      letterSpacing: "-1px",
-      zIndex: 51,
-      minWidth: "max-content",
-    },
-    linksDesktop: {
-      display: "flex",
-      gap: "2rem",
-      alignItems: "center",
-      justifySelf: "center",
-    },
-    rightSection: {
-      display: "flex",
-      alignItems: "center",
-      gap: "1.5rem",
-      justifySelf: "end",
-    },
-    profileContainer: {
-      display: "flex",
-      alignItems: "center",
-      gap: "0.75rem",
-      background: "rgba(56, 189, 248, 0.1)",
-      padding: "0.5rem 1rem",
-      borderRadius: "50px",
-      border: "1px solid rgba(56, 189, 248, 0.2)",
-      textDecoration: "none",
-      color: "inherit",
-      transition: "background 0.2s",
-      cursor: "pointer",
-    },
-    profileImg: {
-      width: "32px",
-      height: "32px",
-      borderRadius: "50%",
-      objectFit: "cover",
-      border: "2px solid var(--accent-color)",
-    },
-    divider: {
-      width: "1px",
-      height: "24px",
-      background: "var(--border-color)",
-    },
-    linksMobile: {
-      display: "none",
-      flexDirection: "column",
-      position: "absolute",
-      top: "100%",
-      left: 0,
-      right: 0,
-      background: "var(--nav-bg)",
-      borderBottom: "1px solid var(--border-color)",
-      padding: "1rem 2rem",
-      gap: "1rem",
-      backdropFilter: "blur(10px)",
-    },
-    linksMobileOpen: {
-      display: "flex",
-    },
-    link: {
-      color: "var(--text-secondary)",
-      textDecoration: "none",
-      fontWeight: "500",
-      fontSize: "0.95rem",
-      transition: "color 0.2s",
-      cursor: "pointer",
-    },
-    toggleBtn: {
-      background: "transparent",
-      border: "1px solid var(--border-color)",
-      color: "var(--accent-color)",
-      borderRadius: "50%",
-      width: "40px",
-      height: "40px",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      cursor: "pointer",
-      transition: "all 0.2s",
-    },
-    menuBtn: {
-      background: "transparent",
-      border: "none",
-      color: "var(--accent-color)",
-      cursor: "pointer",
-      display: "none",
-      padding: "0.5rem",
-      zIndex: 51,
-    },
+  const navStyles = {
+    position: "sticky",
+    top: 0,
+    zIndex: 100,
+    width: "100%",
+    backdropFilter: "blur(16px)",
+    backgroundColor: scrolled ? "var(--nav-bg)" : "transparent",
+    borderBottom: scrolled ? "1px solid var(--border-color)" : "1px solid transparent",
+    transition: "all 0.3s ease",
+    padding: "0.85rem 2rem",
   };
 
-  const mediaQuery = window.matchMedia("(max-width: 900px)");
-  const isMobile = mediaQuery.matches;
+  const containerStyles = {
+    maxWidth: "1280px",
+    margin: "0 auto",
+    display: "flex",
+    alignItems: "center",
+    justifySpaceBetween: "space-between",
+  };
 
-  // Render for Mobile
-  if (isMobile) {
-    return (
-      <nav
-        style={{
-          ...styles.nav,
+  return (
+    <nav style={navStyles}>
+      <div style={{
+        maxWidth: "1280px",
+        margin: "0 auto",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between"
+      }}>
+        {/* Brand Logo */}
+        <Link to="/" style={{
           display: "flex",
-          justifyContent: "space-between",
-        }}
-      >
-        <Link to="/" style={styles.logo}>
-          &lt;Portfolio /&gt;
+          alignItems: "center",
+          gap: "0.6rem",
+          textDecoration: "none",
+          color: "var(--text-primary)",
+          fontWeight: "800",
+          fontSize: "1.25rem",
+          letterSpacing: "-0.5px"
+        }}>
+          <div style={{
+            width: "36px",
+            height: "36px",
+            borderRadius: "10px",
+            background: "linear-gradient(135deg, var(--accent-cyan), var(--accent-indigo))",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#000",
+            boxShadow: "0 0 15px rgba(0, 242, 254, 0.4)"
+          }}>
+            <Cpu size={20} />
+          </div>
+          <span>Kuldeep<span style={{ color: "var(--accent-cyan)" }}>.AI</span></span>
         </Link>
 
-        {/* Mobile Right Controls */}
-        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
-          <button
-            onClick={toggleTheme}
-            style={styles.toggleBtn}
-            title="Switch Theme"
-          >
-            {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
-          </button>
-
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            style={styles.menuBtn}
-          >
-            {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
-          </button>
+        {/* Desktop Navigation Links */}
+        <div style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "2rem",
+        }} className="desktop-only">
+          <a href="#about" style={linkStyle}>About</a>
+          <a href="#projects" style={linkStyle}>Projects</a>
+          <a href="#skills" style={linkStyle}>Skills</a>
+          <a href="#experience" style={linkStyle}>Experience</a>
+          <a href="#education" style={linkStyle}>Education</a>
+          <a href="#certifications" style={linkStyle}>Certifications</a>
+          <a href="#contact" style={linkStyle}>Contact</a>
         </div>
 
-        {/* Mobile Links Dropdown */}
-        <div
-          style={{
-            ...styles.linksMobile,
-            ...(mobileMenuOpen ? styles.linksMobileOpen : {}),
-            zIndex: 100,
-          }}
-        >
-          {/* Include Profile in Mobile Menu - Linked to #profile */}
-          <a
-            href="/#profile"
-            style={{
-              ...styles.link,
+        {/* Right Section: Status Pill & Theme Toggle */}
+        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+          {profile && (
+            <div style={{
               display: "flex",
               alignItems: "center",
-              gap: "10px",
-              padding: "10px 0",
-              borderBottom: "1px solid var(--border-color)",
-              marginBottom: "10px",
-            }}
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            {profile?.profile_picture ? (
-              <img
-                src={`http://127.0.0.1:8000${profile.profile_picture}`}
-                alt="Profile"
-                style={styles.profileImg}
-              />
-            ) : (
-              <span>⚡</span>
-            )}
-            <span>{profile?.name || "Profile"}</span>
-          </a>
-
-          {/* Home Link Removed */}
-          <a
-            href="/#skills"
-            style={styles.link}
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            Skills
-          </a>
-          <a
-            href="/#experience"
-            style={styles.link}
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            Experience
-          </a>
-          <a
-            href="/#projects"
-            style={styles.link}
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            Projects
-          </a>
-          <a
-            href="/#contact"
-            style={styles.link}
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            Contact
-          </a>
-        </div>
-      </nav>
-    );
-  }
-
-  // Render for Desktop
-  return (
-    <nav style={styles.nav}>
-      {/* LEFT: LOGO */}
-      <Link to="/" style={styles.logo}>
-        &lt;Portfolio /&gt;
-      </Link>
-
-      {/* CENTER: LINKS */}
-      <div style={styles.linksDesktop}>
-        {/* Home Link Removed */}
-        <a
-          href="/#skills"
-          style={styles.link}
-          onMouseEnter={(e) => (e.target.style.color = "var(--accent-color)")}
-          onMouseLeave={(e) => (e.target.style.color = "var(--text-secondary)")}
-        >
-          Skills
-        </a>
-        <a
-          href="/#experience"
-          style={styles.link}
-          onMouseEnter={(e) => (e.target.style.color = "var(--accent-color)")}
-          onMouseLeave={(e) => (e.target.style.color = "var(--text-secondary)")}
-        >
-          Experience
-        </a>
-        <a
-          href="/#projects"
-          style={styles.link}
-          onMouseEnter={(e) => (e.target.style.color = "var(--accent-color)")}
-          onMouseLeave={(e) => (e.target.style.color = "var(--text-secondary)")}
-        >
-          Projects
-        </a>
-        <a
-          href="/#contact"
-          style={styles.link}
-          onMouseEnter={(e) => (e.target.style.color = "var(--accent-color)")}
-          onMouseLeave={(e) => (e.target.style.color = "var(--text-secondary)")}
-        >
-          Contact
-        </a>
-      </div>
-
-      {/* RIGHT: PROFILE + TOGGLE */}
-      <div style={styles.rightSection}>
-        {/* Profile Link to #profile */}
-        <a href="/#profile" style={styles.profileContainer}>
-          {profile?.profile_picture ? (
-            <img
-              src={`http://127.0.0.1:8000${profile.profile_picture}`}
-              alt="Profile"
-              style={styles.profileImg}
-            />
-          ) : (
-            <span style={{ fontSize: "1.2rem" }}>⚡</span>
+              gap: "0.6rem",
+              padding: "0.35rem 0.85rem",
+              borderRadius: "9999px",
+              background: "rgba(0, 242, 254, 0.08)",
+              border: "1px solid rgba(0, 242, 254, 0.2)",
+              fontSize: "0.85rem",
+              fontWeight: "600",
+              color: "var(--text-primary)"
+            }}>
+              <span style={{
+                width: "8px",
+                height: "8px",
+                borderRadius: "50%",
+                background: "#10b981",
+                boxShadow: "0 0 8px #10b981"
+              }}></span>
+              <span>{profile.title || "AI Developer"}</span>
+            </div>
           )}
-          <span style={{ fontSize: "0.9rem", fontWeight: "600" }}>
-            {profile?.name || "Me"}
-          </span>
-        </a>
 
-        <div style={styles.divider}></div>
+          <button
+            onClick={toggleTheme}
+            style={{
+              background: "var(--bg-card)",
+              border: "1px solid var(--border-color)",
+              color: "var(--accent-cyan)",
+              borderRadius: "10px",
+              width: "38px",
+              height: "38px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              transition: "all 0.2s"
+            }}
+            title="Toggle Dark/Light Theme"
+          >
+            {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
 
-        <button
-          onClick={toggleTheme}
-          style={styles.toggleBtn}
-          title="Switch Theme"
-        >
-          {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
-        </button>
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            style={{
+              background: "transparent",
+              border: "none",
+              color: "var(--text-primary)",
+              cursor: "pointer",
+              display: "none"
+            }}
+            className="mobile-menu-btn"
+          >
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
+
+      {/* Mobile Links Dropdown */}
+      {mobileMenuOpen && (
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "1rem",
+          padding: "1rem 0 0.5rem 0",
+          borderTop: "1px solid var(--border-color)",
+          marginTop: "0.85rem"
+        }}>
+          <a href="#about" style={linkStyle} onClick={() => setMobileMenuOpen(false)}>About</a>
+          <a href="#projects" style={linkStyle} onClick={() => setMobileMenuOpen(false)}>Projects</a>
+          <a href="#skills" style={linkStyle} onClick={() => setMobileMenuOpen(false)}>Skills</a>
+          <a href="#experience" style={linkStyle} onClick={() => setMobileMenuOpen(false)}>Experience</a>
+          <a href="#education" style={linkStyle} onClick={() => setMobileMenuOpen(false)}>Education</a>
+          <a href="#certifications" style={linkStyle} onClick={() => setMobileMenuOpen(false)}>Certifications</a>
+          <a href="#contact" style={linkStyle} onClick={() => setMobileMenuOpen(false)}>Contact</a>
+        </div>
+      )}
     </nav>
   );
+};
+
+const linkStyle = {
+  color: "var(--text-secondary)",
+  textDecoration: "none",
+  fontWeight: "600",
+  fontSize: "0.9rem",
+  transition: "color 0.2s ease"
 };
 
 export default Navbar;

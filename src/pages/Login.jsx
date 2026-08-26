@@ -2,13 +2,15 @@ import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { loginUser } from "../services/auth";
-import { Lock, User, Terminal, Loader } from "lucide-react"; // Icons
+import { Lock, User, Terminal, Loader, Eye, EyeOff, ShieldCheck, ArrowRight } from "lucide-react";
+import "../styles/Home.css";
 
 const Login = () => {
   const [credentials, setCredentials] = useState({
     username: "",
     password: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const { login } = useContext(AuthContext);
@@ -25,150 +27,182 @@ const Login = () => {
 
     try {
       const data = await loginUser(credentials.username, credentials.password);
-
-      // If successful, update global state and redirect
       login(data);
-      navigate("/admin"); // We will build this page next
+      navigate("/admin");
     } catch (err) {
-      // Handle the 401 error from your API
-      setError("Invalid credentials. Access denied.");
+      console.error("Login Error:", err);
+      if (err?.code === "INVALID_CREDENTIALS" || err?.detail || err?.non_field_errors) {
+        setError("Invalid username or password. Access denied.");
+      } else {
+        setError(err?.message || "Authentication failed. Please check backend status.");
+      }
       setLoading(false);
     }
   };
 
-  // --- Inline Styles for Quick Setup (We use CSS variables) ---
-  const styles = {
-    container: {
-      display: "flex",
-      height: "100vh",
-      alignItems: "center",
-      justifyContent: "center",
-      background: "radial-gradient(circle at center, #1e293b 0%, #0f172a 100%)",
-    },
-    card: {
-      background: "var(--bg-secondary)",
-      padding: "2.5rem",
-      borderRadius: "12px",
-      boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
-      width: "100%",
-      maxWidth: "400px",
-      border: "1px solid rgba(56, 189, 248, 0.1)",
-    },
-    header: {
-      textAlign: "center",
-      marginBottom: "2rem",
-      color: "var(--accent-color)",
-    },
-    inputGroup: {
-      marginBottom: "1.5rem",
-      position: "relative",
-    },
-    input: {
-      width: "100%",
-      padding: "12px 12px 12px 40px", // Space for icon
-      background: "#0f172a",
-      border: "1px solid #334155",
-      borderRadius: "6px",
-      color: "white",
-      fontSize: "1rem",
-      boxSizing: "border-box",
-    },
-    icon: {
-      position: "absolute",
-      left: "12px",
-      top: "12px",
-      color: "#94a3b8",
-      width: "18px",
-    },
-    button: {
-      width: "100%",
-      padding: "12px",
-      background: loading ? "#334155" : "var(--accent-color)",
-      color: "#0f172a",
-      border: "none",
-      borderRadius: "6px",
-      fontWeight: "bold",
-      fontSize: "1rem",
-      cursor: loading ? "not-allowed" : "pointer",
-      transition: "all 0.2s",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      gap: "10px",
-    },
-    error: {
-      color: "var(--error-color)",
-      marginBottom: "1rem",
-      textAlign: "center",
-      fontSize: "0.9rem",
-      fontFamily: "var(--font-mono)",
-    },
-    loader: {
-      animation: "spin 1s linear infinite",
-    },
-  };
-
   return (
-    <div style={styles.container}>
-      <style>
-        {`
-                    @keyframes spin {
-                        from { transform: rotate(0deg); }
-                        to { transform: rotate(360deg); }
-                    }
-                `}
-      </style>
-      <div style={styles.card}>
-        <div style={styles.header}>
-          <Terminal size={48} style={{ marginBottom: "10px" }} />
-          <h2 style={{ margin: 0 }}>System Access</h2>
-          <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem" }}>
-            Identify yourself
-          </p>
+    <div className="home-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', padding: '1.5rem' }}>
+      {/* Ambient Grid Background */}
+      <div className="neural-background">
+        <div className="neural-grid"></div>
+      </div>
+
+      <div 
+        className="content-wrapper" 
+        style={{ 
+          width: '100%', 
+          maxWidth: '440px', 
+          padding: '0' 
+        }}
+      >
+        <div 
+          style={{
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border-color)',
+            borderRadius: '24px',
+            padding: '2.5rem',
+            backdropFilter: 'blur(20px)',
+            boxShadow: '0 20px 50px rgba(0,0,0,0.5), var(--glow-cyan)',
+            position: 'relative',
+            overflow: 'hidden'
+          }}
+        >
+          {/* Top Decorative Header */}
+          <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+              <img 
+                src="/favicon.svg" 
+                alt="KT Logo" 
+                style={{
+                  width: '56px',
+                  height: '56px',
+                  borderRadius: '16px',
+                  boxShadow: '0 0 20px rgba(0, 242, 254, 0.4)'
+                }} 
+              />
+            </div>
+            
+            <h2 style={{ fontSize: '1.8rem', fontWeight: '800', margin: '0 0 0.4rem 0', color: 'var(--text-primary)' }}>
+              Dev Admin Access
+            </h2>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: 0 }}>
+              Authenticate with your system credentials
+            </p>
+          </div>
+
+          {/* Error Notice */}
+          {error && (
+            <div style={{
+              background: 'rgba(239, 68, 68, 0.12)',
+              border: '1px solid rgba(239, 68, 68, 0.3)',
+              color: '#f87171',
+              padding: '0.75rem 1rem',
+              borderRadius: '10px',
+              marginBottom: '1.5rem',
+              fontSize: '0.88rem',
+              fontFamily: "'Fira Code', monospace",
+              textAlign: 'center'
+            }}>
+              🚨 {error}
+            </div>
+          )}
+
+          {/* Form */}
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label className="form-label">Username</label>
+              <div style={{ position: 'relative' }}>
+                <User size={18} style={{ position: 'absolute', left: '14px', top: '14px', color: 'var(--accent-cyan)' }} />
+                <input
+                  type="text"
+                  name="username"
+                  className="form-input"
+                  placeholder="Username (e.g. djtapodhan143)"
+                  value={credentials.username}
+                  onChange={handleChange}
+                  style={{ paddingLeft: '44px' }}
+                  required
+                  disabled={loading}
+                />
+              </div>
+            </div>
+
+            <div className="form-group" style={{ marginBottom: '1.8rem' }}>
+              <label className="form-label">Password</label>
+              <div style={{ position: 'relative' }}>
+                <Lock size={18} style={{ position: 'absolute', left: '14px', top: '14px', color: 'var(--accent-cyan)' }} />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  className="form-input"
+                  placeholder="Enter secret password"
+                  value={credentials.password}
+                  onChange={handleChange}
+                  style={{ paddingLeft: '44px', paddingRight: '44px' }}
+                  required
+                  disabled={loading}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{
+                    position: 'absolute',
+                    right: '12px',
+                    top: '12px',
+                    background: 'transparent',
+                    border: 'none',
+                    color: 'var(--text-muted)',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center'
+                  }}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className="btn-primary"
+              style={{ width: '100%', justifyContent: 'center', padding: '0.9rem' }}
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <Loader size={18} className="spinner" style={{ animation: 'spin 1s linear infinite' }} />
+                  <span>AUTHENTICATING...</span>
+                </>
+              ) : (
+                <>
+                  <ShieldCheck size={18} />
+                  <span>INITIALIZE ADMIN SESSION</span>
+                </>
+              )}
+            </button>
+          </form>
+
+          {/* Quick link back to website */}
+          <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
+            <button
+              type="button"
+              onClick={() => navigate('/')}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: 'var(--text-muted)',
+                fontSize: '0.85rem',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.4rem'
+              }}
+            >
+              <span>Return to Public Website</span>
+              <ArrowRight size={14} />
+            </button>
+          </div>
         </div>
-
-        {error && <div style={styles.error}>{`> Error: ${error}`}</div>}
-
-        <form onSubmit={handleSubmit}>
-          <div style={styles.inputGroup}>
-            <User style={styles.icon} />
-            <input
-              type="text"
-              name="username"
-              placeholder="Username"
-              value={credentials.username}
-              onChange={handleChange}
-              style={styles.input}
-              required
-              disabled={loading}
-            />
-          </div>
-
-          <div style={styles.inputGroup}>
-            <Lock style={styles.icon} />
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={credentials.password}
-              onChange={handleChange}
-              style={styles.input}
-              required
-              disabled={loading}
-            />
-          </div>
-
-          <button type="submit" disabled={loading} style={styles.button}>
-            {loading ? (
-              <>
-                <Loader size={18} style={styles.loader} />
-                AUTHENTICATING...
-              </>
-            ) : (
-              "INITIALIZE SESSION"
-            )}
-          </button>
-        </form>
       </div>
     </div>
   );

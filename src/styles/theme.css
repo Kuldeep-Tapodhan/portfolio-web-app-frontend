@@ -1,41 +1,96 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
 :root {
-  /* Default DARK Mode Colors */
-  --bg-primary: #020617;   /* Very dark blue/black */
-  --bg-secondary: #0f172a; /* Slightly lighter */
-  --text-primary: #ffffff;
+  /* Futuristic Neural Glass - Dark Mode (Default) */
+  --bg-primary: #07090e;
+  --bg-secondary: #0d111a;
+  --bg-card: rgba(13, 17, 26, 0.65);
+  --bg-card-hover: rgba(20, 27, 41, 0.85);
+  --bg-glass: rgba(13, 17, 26, 0.7);
+  --bg-terminal: #090c15;
+  
+  --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
-  --accent-color: #38bdf8; /* Sky Blue */
-  --border-color: #1e293b;
-  --nav-bg: rgba(15, 23, 42, 0.95);
+  --text-muted: #64748b;
+  
+  --accent-cyan: #00f2fe;
+  --accent-blue: #38bdf8;
+  --accent-indigo: #818cf8;
+  --accent-purple: #a855f7;
+  --accent-emerald: #10b981;
+  --accent-amber: #f59e0b;
+  
+  --accent-color: #00f2fe;
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-glow: rgba(0, 242, 254, 0.25);
+  
+  --nav-bg: rgba(7, 9, 14, 0.8);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  --glow-cyan: 0 0 20px rgba(0, 242, 254, 0.25);
+  --glow-purple: 0 0 20px rgba(168, 85, 247, 0.25);
 }
 
-/* LIGHT Mode Overrides */
 .light-mode {
-  --bg-primary: #f8fafc;   /* Almost white */
-  --bg-secondary: #ffffff; /* Pure white */
-  --text-primary: #020617; /* Slate 950 - Deeper black/navy for better contrast */
-  --text-secondary: #334155; /* Slate 700 - Darker grey for better readability */
-  --accent-color: #0284c7; /* Darker blue */
-  --border-color: #cbd5e1;
-  --nav-bg: rgba(255, 255, 255, 0.95);
+  /* Light Mode Glass Overrides */
+  --bg-primary: #f8fafc;
+  --bg-secondary: #f1f5f9;
+  --bg-card: rgba(255, 255, 255, 0.85);
+  --bg-card-hover: rgba(255, 255, 255, 0.98);
+  --bg-glass: rgba(255, 255, 255, 0.85);
+  --bg-terminal: #0f172a;
+  
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  
+  --accent-cyan: #0284c7;
+  --accent-blue: #0284c7;
+  --accent-indigo: #4f46e5;
+  --accent-purple: #7e22ce;
+  --accent-emerald: #059669;
+  
+  --accent-color: #0284c7;
+  --border-color: rgba(15, 23, 42, 0.12);
+  --border-glow: rgba(2, 132, 199, 0.3);
+  
+  --nav-bg: rgba(248, 250, 252, 0.85);
+  --glass-shadow: 0 8px 32px 0 rgba(15, 23, 42, 0.08);
+  --glow-cyan: 0 0 20px rgba(2, 132, 199, 0.2);
+  --glow-purple: 0 0 20px rgba(126, 34, 206, 0.2);
 }
 
-/* Global Reset & Body */
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
-  
-  /* Apply the variables */
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  
-  /* Smooth transition when switching themes */
   transition: background-color 0.3s ease, color 0.3s ease;
+  overflow-x: hidden;
 }
 
-/* Scrollbar styling (Optional but looks nice) */
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: var(--bg-primary); }
-::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-.light-mode ::-webkit-scrollbar-thumb { background: #cbd5e1; }
+code, pre, .font-mono {
+  font-family: 'Fira Code', monospace;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(56, 189, 248, 0.25);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-cyan);
+}
