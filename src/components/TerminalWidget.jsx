@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Terminal as TerminalIcon, Send, Sparkles, Trash2, HelpCircle, Code } from 'lucide-react';
 
-const TerminalWidget = () => {
+const TerminalWidget = ({ profile, skills = [], projects = [], contactInfo, experiences = [], education = [] }) => {
   const [history, setHistory] = useState([
     {
       type: 'system',
@@ -18,8 +18,6 @@ const TerminalWidget = () => {
   const commandShortcuts = [
     'help',
     'about',
-    'voice-bot',
-    'rag',
     'skills',
     'projects',
     'contact',
@@ -43,68 +41,49 @@ const TerminalWidget = () => {
       case 'help':
         responseText = [
           '⚡ Available Commands:',
-          '  about      - Display developer summary & current focus',
-          '  voice-bot  - LiveKit Multi-Agent Voice AI Architecture',
-          '  rag        - BioMistral-7B Regional Healthcare RAG Chatbot',
-          '  skills     - AI/ML, LLM Fine-Tuning, Backend & DevOps stack',
-          '  projects   - Production AI systems showcase',
+          '  about      - Display developer summary & current profile',
+          '  skills     - Technical capabilities & model stack',
+          '  projects   - Production AI & engineering builds',
           '  contact    - Retrieve direct contact details & links',
           '  clear      - Clear terminal output screen'
         ];
         break;
       case 'about':
         responseText = [
-          '👤 Kuldeep Tapodhan | Python AI & ML Developer',
-          '📍 Company: Amenity Technologies (1+ Years Industry Experience)',
-          '🎓 Degree: B.Tech in Information Technology',
-          '💡 Expertise: Multi-Agent Systems, RAG Pipelines, Computer Vision, Fast-API / Django REST Framework.'
-        ];
-        break;
-      case 'voice-bot':
-        responseText = [
-          '🎙️ Multi-Agent Voice AI Platform:',
-          '  • Stack: LiveKit Agents SDK + Deepgram Nova 3 (STT) + Cartesia Sonic (TTS)',
-          '  • Core Feature: Zero-latency domain handoffs across specialized agents',
-          '  • LLM Backbones: Gemini 2.5 Flash, Claude 3.5 Sonnet, GPT-4o',
-          '  • Transport: WebRTC real-time audio + SIP/VOIP telemetry bridge'
-        ];
-        break;
-      case 'rag':
-        responseText = [
-          '🏥 Regional Health Assistance Chatbot (RAG):',
-          '  • Model: BioMistral-7B fine-tuned via QLoRA (MedQuAD & HealthcareMagic datasets)',
-          '  • Vector Store: ChromaDB with 384d Sentence Transformers',
-          '  • Capabilities: 127+ clinical PDF parsing, Tesseract OCR OCR, Haversine GPS hospital locator'
-        ];
+          `👤 ${profile?.name || 'Kuldeep Tapodhan'} | ${profile?.title || 'Python AI & ML Developer'}`,
+          experiences[0]?.company_name ? `📍 Company: ${experiences[0].company_name} (${experiences[0].role})` : null,
+          education[0]?.degree ? `🎓 Education: ${education[0].degree} @ ${education[0].institution}` : null,
+          profile?.bio ? `💡 Summary: ${profile.bio}` : null
+        ].filter(Boolean);
         break;
       case 'skills':
-        responseText = [
+        responseText = skills.length > 0 ? [
           '🛠️ Technical Capabilities:',
-          '  • AI & ML: PyTorch, TensorFlow, OpenCV, Scikit-Learn, LangChain, ChromaDB, RAG',
-          '  • LLMs & Voice: Llama 3.3, BioMistral, LiveKit, Silero VAD, Deepgram, Cartesia',
-          '  • Backend: FastAPI, Django / DRF, Flask, REST APIs, PostgreSQL, MySQL',
-          '  • Cloud & DevOps: Docker, Nginx, SSL, DNS, AWS EC2/S3, GitHub Actions'
+          ...skills.slice(0, 12).map((s) => `  • ${s.name} (${s.percentage}%)`)
+        ] : [
+          '🛠️ Technical Capabilities: AI/ML, LLM Fine-Tuning, Multi-Agent Systems, FastAPI, Django, PyTorch.'
         ];
         break;
       case 'projects':
-        responseText = [
+        responseText = projects.length > 0 ? [
           '🚀 Flagship AI Projects:',
-          '  1. Multi-Agent Voice Bot Platform (LiveKit + DRF + WebRTC/SIP)',
-          '  2. Regional Health Assistance Chatbot (BioMistral RAG + FastAPI)',
-          '  3. Plantify - Disease Detection Mobile System (TFLite + Kotlin)',
-          '  4. Bollywood Song Recommendation Engine (KNN + Flask)',
-          '  5. Disease Prediction & Drug Recommender (Random Forest + Gemini LLM)',
-          '  6. Production Dynamic Task Management System (Django DRF + PostgreSQL)'
+          ...projects.map((p, idx) => `  ${idx + 1}. ${p.title} ${p.tech_stack ? `[${p.tech_stack}]` : ''}`)
+        ] : [
+          '🚀 Flagship AI Projects: Multi-Agent Voice Bot, Healthcare RAG Engine, Computer Vision Mobile App.'
         ];
         break;
       case 'contact':
+        const email = contactInfo?.email || profile?.email;
+        const phone = contactInfo?.phone || profile?.phone;
+        const github = contactInfo?.github_link || profile?.github_link;
+        const linkedin = contactInfo?.linkedin_link || profile?.linkedin_link;
         responseText = [
           '📬 Direct Channels:',
-          '  • Email: kuldeep.tapodhan0306@gmail.com',
-          '  • GitHub: https://github.com/Kuldeep-Tapodhan',
-          '  • LinkedIn: https://www.linkedin.com/in/kuldeep-tapodhan-780701251/',
-          '  • Phone: +91 9016568931'
-        ];
+          email ? `  • Email: ${email}` : null,
+          phone ? `  • Phone: ${phone}` : null,
+          github ? `  • GitHub: ${github}` : null,
+          linkedin ? `  • LinkedIn: ${linkedin}` : null
+        ].filter(Boolean);
         break;
       default:
         responseText = [

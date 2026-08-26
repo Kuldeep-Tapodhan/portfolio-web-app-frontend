@@ -103,6 +103,22 @@ const Home = () => {
     return sk.category === activeSkillCategory;
   });
 
+  // Calculate dynamic metrics from API data
+  const calculatedYearsExp = experiences.length > 0 ? (
+    Math.max(...experiences.map(exp => {
+      if (!exp.start_date) return 1;
+      const startYear = new Date(exp.start_date).getFullYear();
+      const currentYear = new Date().getFullYear();
+      return Math.max(1, currentYear - startYear + 1);
+    }))
+  ) : (profile ? 1 : 0);
+
+  const displayYearsExp = calculatedYearsExp > 0 ? `${calculatedYearsExp}+ Yrs` : '1+ Yrs';
+  const displayProjectsCount = projects.length > 0 ? `${projects.length}+` : '0+';
+  const displaySkillsCount = skills.length > 0 ? `${skills.length}+` : '0+';
+  const currentCompanyTag = experiences[0]?.company_name ? `@ ${experiences[0].company_name}` : '';
+  const currentRoleSub = experiences[0] ? `${experiences[0].company_name} • ${experiences[0].role}` : (profile?.title || '');
+
   return (
     <div className="home-container">
       {/* Ambient Neural Grid & Background */}
@@ -134,9 +150,11 @@ const Home = () => {
                   <span className="pulse-dot"></span>
                   <span>Available for AI Engineering</span>
                 </div>
-                <div style={{ fontSize: '0.86rem', color: 'var(--text-muted)', fontWeight: '600' }}>
-                  Amenity Technologies • AI/ML Developer
-                </div>
+                {currentRoleSub && (
+                  <div style={{ fontSize: '0.86rem', color: 'var(--text-muted)', fontWeight: '600' }}>
+                    {currentRoleSub}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -146,7 +164,7 @@ const Home = () => {
 
             <div className="hero-company-tag">
               <Bot size={20} />
-              <span>{profile?.title || "Python AI/ML Developer"} @ Amenity Technologies</span>
+              <span>{profile?.title || "Python AI/ML Developer"} {currentCompanyTag}</span>
             </div>
 
             <p className="hero-bio">
@@ -158,15 +176,15 @@ const Home = () => {
             {/* Quick Metrics */}
             <div className="metrics-row">
               <div className="metric-card">
-                <span className="metric-number">1+ Yrs</span>
+                <span className="metric-number">{displayYearsExp}</span>
                 <span className="metric-label">Industry Exp.</span>
               </div>
               <div className="metric-card">
-                <span className="metric-number">8+</span>
+                <span className="metric-number">{displayProjectsCount}</span>
                 <span className="metric-label">AI/ML Builds</span>
               </div>
               <div className="metric-card">
-                <span className="metric-number">33+</span>
+                <span className="metric-number">{displaySkillsCount}</span>
                 <span className="metric-label">Tech & Models</span>
               </div>
             </div>
@@ -186,7 +204,14 @@ const Home = () => {
 
           {/* Right Side: Interactive Terminal Widget */}
           <div className="hero-terminal-wrapper">
-            <TerminalWidget />
+            <TerminalWidget
+              profile={profile}
+              skills={skills}
+              projects={projects}
+              contactInfo={contactInfo}
+              experiences={experiences}
+              education={education}
+            />
           </div>
         </section>
 
