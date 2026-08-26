@@ -103,19 +103,34 @@ const Home = () => {
     return sk.category === activeSkillCategory;
   });
 
-  // Calculate dynamic metrics from API data
-  const calculatedYearsExp = experiences.length > 0 ? (
-    Math.max(...experiences.map(exp => {
-      if (!exp.start_date) return 1;
-      const startYear = new Date(exp.start_date).getFullYear();
-      const currentYear = new Date().getFullYear();
-      return Math.max(1, currentYear - startYear + 1);
-    }))
-  ) : (profile ? 1 : 0);
+  // Calculate accurate dynamic metrics from API data
+  const totalMonthsExp = experiences.reduce((acc, exp) => {
+    if (!exp.start_date) return acc;
+    const start = new Date(exp.start_date);
+    const end = exp.end_date ? new Date(exp.end_date) : new Date();
+    if (isNaN(start.getTime())) return acc;
+    const months = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth()) + 1;
+    return acc + Math.max(1, months);
+  }, 0);
+  const yearsExp = Math.max(1, Math.floor(totalMonthsExp / 12));
+  const displayYearsExp = `${yearsExp}+ Yrs`;
 
-  const displayYearsExp = calculatedYearsExp > 0 ? `${calculatedYearsExp}+ Yrs` : '1+ Yrs';
   const displayProjectsCount = projects.length > 0 ? `${projects.length}+` : '0+';
-  const displaySkillsCount = skills.length > 0 ? `${skills.length}+` : '0+';
+
+  // Deduplicate and filter technical skills & models (excluding soft skill descriptors)
+  const uniqueTechSkills = new Set(
+    skills
+      .map(s => s.name.trim())
+      .filter(name => {
+        const lower = name.toLowerCase();
+        return !lower.includes('communication') &&
+               !lower.includes('collaboration') &&
+               !lower.includes('problem solving') &&
+               !lower.includes('debugging');
+      })
+  );
+  const techCount = uniqueTechSkills.size > 0 ? uniqueTechSkills.size : (skills.length || 0);
+  const displaySkillsCount = `${techCount}+`;
 
   // Detect current active experience (prefer ongoing/present experience where end_date is null, or fallback to first item)
   const currentExp = experiences.find(e => !e.end_date) || experiences[0];
