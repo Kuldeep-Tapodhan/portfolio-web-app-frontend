@@ -14,7 +14,7 @@ import { getMediaUrl } from '../services/api';
 import { 
   Cpu, Sparkles, Terminal, Code2, Briefcase, GraduationCap, Mail, Phone, 
   MapPin, ExternalLink, Github, Linkedin, Twitter, CheckCircle2, ArrowRight, 
-  Layers, Bot, Database, Zap, Send, MessageSquare, Award, ShieldCheck, UserCheck, Camera, FileText
+  Layers, Bot, Database, Zap, Send, MessageSquare, Award, ShieldCheck, UserCheck, Camera, FileText, X
 } from 'lucide-react';
 import '../styles/Home.css';
 
@@ -27,6 +27,7 @@ const Home = () => {
   const [education, setEducation] = useState([]);
   const [contactInfo, setContactInfo] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedProject, setSelectedProject] = useState(null);
 
   // Filter States
   const [activeProjectCategory, setActiveProjectCategory] = useState('ALL');
@@ -293,6 +294,9 @@ const Home = () => {
                 <div
                   key={project.id || idx}
                   className={`bento-card ${isFeatured ? 'featured' : ''}`}
+                  onClick={() => setSelectedProject(project)}
+                  style={{ cursor: 'pointer' }}
+                  title="Click to view full project architecture & details"
                 >
                   <div>
                     <div className="bento-badge">
@@ -300,7 +304,7 @@ const Home = () => {
                       <span>{isFeatured ? 'Featured Architecture' : 'Production Build'}</span>
                     </div>
                     <h3 className="project-title">{project.title}</h3>
-                    <p className="project-description" title={project.description}>
+                    <p className="project-description">
                       {truncateText(project.description, 135)}
                     </p>
                   </div>
@@ -323,6 +327,7 @@ const Home = () => {
                           target="_blank"
                           rel="noopener noreferrer"
                           className="project-link-btn"
+                          onClick={(e) => e.stopPropagation()}
                         >
                           <Github size={16} />
                           <span>Code Repository</span>
@@ -334,6 +339,7 @@ const Home = () => {
                           target="_blank"
                           rel="noopener noreferrer"
                           className="project-link-btn"
+                          onClick={(e) => e.stopPropagation()}
                         >
                           <ExternalLink size={16} />
                           <span>Live Demo</span>
@@ -671,6 +677,89 @@ const Home = () => {
         </section>
 
       </div>
+
+      {/* Project Detail Modal Overlay */}
+      {selectedProject && (
+        <div className="project-modal-backdrop" onClick={() => setSelectedProject(null)}>
+          <div className="project-modal-card" onClick={(e) => e.stopPropagation()}>
+            <button
+              className="project-modal-close"
+              onClick={() => setSelectedProject(null)}
+              title="Close details"
+            >
+              <X size={20} />
+            </button>
+
+            <div className="project-modal-header">
+              <div className="bento-badge" style={{ marginBottom: '0.5rem' }}>
+                <Sparkles size={12} />
+                <span>{selectedProject.is_featured ? 'Flagship Architecture' : 'Production Build'}</span>
+              </div>
+              <h2 className="project-modal-title">{selectedProject.title}</h2>
+            </div>
+
+            {selectedProject.image && (
+              <img
+                src={getMediaUrl(selectedProject.image)}
+                alt={selectedProject.title}
+                className="project-modal-image"
+              />
+            )}
+
+            <div className="project-modal-body">
+              <h4 className="project-modal-section-title">Overview & Architecture</h4>
+              <p className="project-modal-description">{selectedProject.description}</p>
+
+              {selectedProject.tech_stack && (
+                <div style={{ marginTop: '1.4rem' }}>
+                  <h4 className="project-modal-section-title">Technologies & Frameworks</h4>
+                  <div className="tech-tags">
+                    {selectedProject.tech_stack.split(',').map((tech, tIdx) => (
+                      <span key={tIdx} className="tech-tag" style={{ fontSize: '0.82rem', padding: '0.3rem 0.75rem' }}>
+                        {tech.trim()}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="project-modal-footer">
+              {selectedProject.github_link && (
+                <a
+                  href={selectedProject.github_link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-primary"
+                  style={{ fontSize: '0.88rem', padding: '0.65rem 1.2rem' }}
+                >
+                  <Github size={16} />
+                  <span>Code Repository</span>
+                </a>
+              )}
+              {selectedProject.live_url && (
+                <a
+                  href={selectedProject.live_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-secondary"
+                  style={{ fontSize: '0.88rem', padding: '0.65rem 1.2rem' }}
+                >
+                  <ExternalLink size={16} />
+                  <span>Live Demo</span>
+                </a>
+              )}
+              <button
+                onClick={() => setSelectedProject(null)}
+                className="btn-secondary"
+                style={{ fontSize: '0.88rem', padding: '0.65rem 1.2rem', marginLeft: 'auto' }}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
