@@ -540,8 +540,8 @@
 
 .bento-card.featured {
   grid-column: span 2;
-  background: linear-gradient(135deg, rgba(13, 17, 26, 0.85), rgba(20, 27, 41, 0.95));
-  border: 1px solid rgba(0, 242, 254, 0.3);
+  background: var(--bg-card-hover);
+  border: 1px solid var(--border-glow);
 }
 
 @media (max-width: 1024px) {
@@ -590,8 +590,8 @@
 .tech-tag {
   padding: 0.2rem 0.6rem;
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
   font-size: 0.75rem;
   color: var(--accent-indigo);
   font-weight: 600;
@@ -970,13 +970,18 @@
   width: 100%;
   padding: 0.8rem 1rem;
   border-radius: 10px;
-  background: rgba(15, 23, 42, 0.6);
+  background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   color: var(--text-primary);
   font-family: inherit;
   font-size: 0.9rem;
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.form-input::placeholder, .form-textarea::placeholder {
+  color: var(--text-muted);
+  opacity: 0.8;
 }
 
 .form-input:focus, .form-textarea:focus {
