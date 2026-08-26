@@ -1,12 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap');
 
 :root {
   /* Futuristic Neural Glass - Dark Mode (Default) */
   --bg-primary: #07090e;
   --bg-secondary: #0d111a;
-  --bg-card: rgba(13, 17, 26, 0.65);
-  --bg-card-hover: rgba(20, 27, 41, 0.85);
-  --bg-glass: rgba(13, 17, 26, 0.7);
+  --bg-card: rgba(13, 17, 26, 0.7);
+  --bg-card-hover: rgba(20, 27, 41, 0.9);
+  --bg-glass: rgba(13, 17, 26, 0.75);
   --bg-terminal: #090c15;
   
   --text-primary: #f8fafc;
@@ -22,21 +22,21 @@
   
   --accent-color: #00f2fe;
   --border-color: rgba(255, 255, 255, 0.08);
-  --border-glow: rgba(0, 242, 254, 0.25);
+  --border-glow: rgba(0, 242, 254, 0.35);
   
-  --nav-bg: rgba(7, 9, 14, 0.8);
-  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-  --glow-cyan: 0 0 20px rgba(0, 242, 254, 0.25);
-  --glow-purple: 0 0 20px rgba(168, 85, 247, 0.25);
+  --nav-bg: rgba(7, 9, 14, 0.85);
+  --glass-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.45);
+  --glow-cyan: 0 0 25px rgba(0, 242, 254, 0.3);
+  --glow-purple: 0 0 25px rgba(168, 85, 247, 0.3);
 }
 
 .light-mode {
   /* Light Mode Glass Overrides */
   --bg-primary: #f8fafc;
-  --bg-secondary: #f1f5f9;
-  --bg-card: rgba(255, 255, 255, 0.85);
-  --bg-card-hover: rgba(255, 255, 255, 0.98);
-  --bg-glass: rgba(255, 255, 255, 0.85);
+  --bg-secondary: #ffffff;
+  --bg-card: rgba(255, 255, 255, 0.9);
+  --bg-card-hover: #ffffff;
+  --bg-glass: rgba(255, 255, 255, 0.9);
   --bg-terminal: #0f172a;
   
   --text-primary: #0f172a;
@@ -51,12 +51,12 @@
   
   --accent-color: #0284c7;
   --border-color: rgba(15, 23, 42, 0.12);
-  --border-glow: rgba(2, 132, 199, 0.3);
+  --border-glow: rgba(2, 132, 199, 0.35);
   
-  --nav-bg: rgba(248, 250, 252, 0.85);
-  --glass-shadow: 0 8px 32px 0 rgba(15, 23, 42, 0.08);
-  --glow-cyan: 0 0 20px rgba(2, 132, 199, 0.2);
-  --glow-purple: 0 0 20px rgba(126, 34, 206, 0.2);
+  --nav-bg: rgba(248, 250, 252, 0.9);
+  --glass-shadow: 0 10px 40px 0 rgba(15, 23, 42, 0.08);
+  --glow-cyan: 0 0 25px rgba(2, 132, 199, 0.25);
+  --glow-purple: 0 0 25px rgba(126, 34, 206, 0.25);
 }
 
 * {
@@ -77,9 +77,23 @@ code, pre, .font-mono {
   font-family: 'Fira Code', monospace;
 }
 
+/* Animations */
+@keyframes floating-glow {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes gradient-flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
