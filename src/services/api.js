@@ -1,12 +1,18 @@
 import axios from 'axios';
 
-// Base URL: Uses VITE_API_TARGET if provided, otherwise relative /api for Vercel/Vite rewrites
+// Get backend URL directly from .env (VITE_API_TARGET or VITE_BACKEND_URL)
 const getApiBaseUrl = () => {
-    const target = import.meta.env.VITE_API_TARGET;
-    if (target && target.startsWith("http") && !target.includes("backend")) {
+    let target = import.meta.env.VITE_API_TARGET || import.meta.env.VITE_BACKEND_URL;
+    if (target) {
+        // Normalize: strip trailing slashes
+        target = target.trim().replace(/\/+$/, '');
+        if (target.endsWith('/api')) {
+            return target;
+        }
         return `${target}/api`;
     }
-    return "/api";
+    // Fallback URL if env is missing
+    return "https://portfolio-web-app-backend.onrender.com/api";
 };
 
 const api = axios.create({
@@ -18,17 +24,18 @@ const api = axios.create({
     },
 });
 
-// Dynamic Media URL Helper for production Vercel & local development
+// Media URL Helper: prepend backend domain from .env for uploaded assets
 export const getMediaUrl = (path) => {
     if (!path) return '';
     if (path.startsWith('http://') || path.startsWith('https://')) {
         return path;
     }
-    const target = import.meta.env.VITE_API_TARGET || 'https://portfolio-web-app-backend.onrender.com';
+    let target = import.meta.env.VITE_API_TARGET || import.meta.env.VITE_BACKEND_URL || 'https://portfolio-web-app-backend.onrender.com';
+    target = target.trim().replace(/\/+$/, '').replace(/\/api$/, '');
     return `${target}${path.startsWith('/') ? '' : '/'}${path}`;
 };
 
-// 1. Request Interceptor: Attach Auth Token, Anti-Cache Headers & Log requests
+// 1. Request Interceptor: Attach Auth Token & Anti-Cache Headers
 api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem("access");
@@ -36,7 +43,6 @@ api.interceptors.request.use(
             config.headers["Authorization"] = `Bearer ${token}`;
         }
         
-        // Ensure browser and Vercel CDN bypass cache
         config.headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
         config.headers["Pragma"] = "no-cache";
 
