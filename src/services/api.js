@@ -1,34 +1,34 @@
 import axios from 'axios';
 
-// Base URL: Direct backend port 8000 in browser environment or relative /api via Vite proxy
+// Base URL: Uses VITE_API_TARGET if provided, otherwise relative /api for Vercel/Vite rewrites
 const getApiBaseUrl = () => {
     const target = import.meta.env.VITE_API_TARGET;
     if (target && target.startsWith("http") && !target.includes("backend")) {
         return `${target}/api`;
     }
-    // Default to port 8000 directly on host localhost, or /api relative fallback
-    return typeof window !== 'undefined' && window.location.hostname === 'localhost'
-        ? "http://localhost:8000/api"
-        : "/api";
+    return "/api";
 };
 
 const api = axios.create({
     baseURL: getApiBaseUrl(),
     headers: {
         "Content-Type": "application/json",
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Pragma": "no-cache",
     },
 });
 
-// Dynamic Media URL Helper (eliminates hardcoded http://127.0.0.1:8000 URLs)
+// Dynamic Media URL Helper for production Vercel & local development
 export const getMediaUrl = (path) => {
     if (!path) return '';
     if (path.startsWith('http://') || path.startsWith('https://')) {
         return path;
     }
-    return `http://localhost:8000${path.startsWith('/') ? '' : '/'}${path}`;
+    const target = import.meta.env.VITE_API_TARGET || 'https://portfolio-web-app-backend.onrender.com';
+    return `${target}${path.startsWith('/') ? '' : '/'}${path}`;
 };
 
-// 1. Request Interceptor: Attach Auth Token & Log every API request fired
+// 1. Request Interceptor: Attach Auth Token, Anti-Cache Headers & Log requests
 api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem("access");
@@ -36,6 +36,10 @@ api.interceptors.request.use(
             config.headers["Authorization"] = `Bearer ${token}`;
         }
         
+        // Ensure browser and Vercel CDN bypass cache
+        config.headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+        config.headers["Pragma"] = "no-cache";
+
         config.metadata = { startTime: new Date() };
         const endpoint = `${config.baseURL || ''}${config.url}`;
         
