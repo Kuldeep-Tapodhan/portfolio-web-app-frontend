@@ -105,7 +105,7 @@ const Home = () => {
 
   return (
     <div className="home-container">
-      {/* Ambient Neural Grid & Glow Effect */}
+      {/* Ambient Neural Grid & Background */}
       <div className="neural-background">
         <div className="neural-grid"></div>
       </div>
@@ -115,7 +115,7 @@ const Home = () => {
         {/* ================= HERO SECTION ================= */}
         <section id="about" className="hero-section">
           <div className="hero-content">
-            {/* Status & Profile Photo Avatar Header */}
+            {/* Profile Photo Avatar & Status Pill */}
             <div className="hero-profile-avatar-wrapper">
               {profile?.profile_picture ? (
                 <img
@@ -124,8 +124,8 @@ const Home = () => {
                   className="hero-profile-img"
                 />
               ) : (
-                <div className="hero-avatar-placeholder" title="Upload your photo via Admin Panel">
-                  <UserCheck size={48} />
+                <div className="hero-avatar-placeholder" title="Developer Avatar">
+                  <UserCheck size={44} />
                 </div>
               )}
 
@@ -134,7 +134,7 @@ const Home = () => {
                   <span className="pulse-dot"></span>
                   <span>Available for AI Engineering</span>
                 </div>
-                <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                <div style={{ fontSize: '0.86rem', color: 'var(--text-muted)', fontWeight: '600' }}>
                   Amenity Technologies • AI/ML Developer
                 </div>
               </div>
@@ -151,7 +151,7 @@ const Home = () => {
 
             <p className="hero-bio">
               {profile?.bio || 
-                "AI & Machine Learning Developer with hands-on experience in building intelligent, scalable applications powered by LLMs, RAG pipelines, multi-agent voice systems, and computer vision models."
+                "AI & Machine Learning Developer specialized in building scalable, production-grade applications powered by Multi-Agent LLM voice systems, fine-tuned RAG pipelines, computer vision models, and high-performance REST APIs."
               }
             </p>
 
@@ -163,7 +163,7 @@ const Home = () => {
               </div>
               <div className="metric-card">
                 <span className="metric-number">8+</span>
-                <span className="metric-label">AI/ML Projects</span>
+                <span className="metric-label">AI/ML Builds</span>
               </div>
               <div className="metric-card">
                 <span className="metric-number">33+</span>
@@ -184,14 +184,14 @@ const Home = () => {
             </div>
           </div>
 
-          {/* Right Hero Side: Interactive Terminal Widget */}
+          {/* Right Side: Interactive Terminal Widget */}
           <div className="hero-terminal-wrapper">
             <TerminalWidget />
           </div>
         </section>
 
         {/* ================= BENTO GRID PROJECTS SECTION ================= */}
-        <section id="projects" style={{ paddingTop: '2rem' }}>
+        <section id="projects" style={{ paddingTop: '2.5rem' }}>
           <div className="section-header">
             <div className="section-badge">
               <Layers size={14} />
@@ -199,7 +199,7 @@ const Home = () => {
             </div>
             <h2 className="section-title">AI & Engineering Projects</h2>
             <p className="section-subtitle">
-              Production-grade Multi-Agent Voice Systems, Fine-Tuned LLM RAG Pipelines, Computer Vision, and Full-Stack Machine Learning.
+              Production-grade Multi-Agent Voice Platforms, Fine-Tuned LLM RAG Pipelines, Computer Vision Mobile Engines, and Machine Learning Systems.
             </p>
           </div>
 
@@ -235,7 +235,7 @@ const Home = () => {
                   <div>
                     <div className="bento-badge">
                       <Sparkles size={12} />
-                      <span>{isFeatured ? 'Flagship Project' : 'Production Build'}</span>
+                      <span>{isFeatured ? 'Flagship Architecture' : 'Production Build'}</span>
                     </div>
                     <h3 className="project-title">{project.title}</h3>
                     <p className="project-description">{project.description}</p>
@@ -292,7 +292,7 @@ const Home = () => {
             </div>
             <h2 className="section-title">Skills & Capabilities</h2>
             <p className="section-subtitle">
-              Comprehensive technical expertise across AI Models, Multi-Agent Frameworks, Backend Development, and DevOps.
+              Comprehensive technical expertise across AI Models, Multi-Agent Frameworks, Backend Systems, and Cloud DevOps.
             </p>
           </div>
 
@@ -346,7 +346,7 @@ const Home = () => {
             </div>
             <h2 className="section-title">Professional Experience</h2>
             <p className="section-subtitle">
-              Hands-on engineering experience building production AI/ML applications, multi-agent voice systems, and backend frameworks.
+              Engineering production AI/ML software, real-time multi-agent voice pipelines, and scalable backend microservices.
             </p>
           </div>
 
@@ -380,7 +380,7 @@ const Home = () => {
             </div>
             <h2 className="section-title">Education & Qualifications</h2>
             <p className="section-subtitle">
-              Academic foundation in computer science, software engineering principles, and specialized technology coursework.
+              Academic foundation in Information Technology, computer science fundamentals, and advanced engineering coursework.
             </p>
           </div>
 
@@ -414,7 +414,7 @@ const Home = () => {
             </div>
             <h2 className="section-title">Certifications & Achievements</h2>
             <p className="section-subtitle">
-              Verified certifications in Machine Learning, Cloud Computing, Python Data Science, and SQL Engineering.
+              Verified certifications across Machine Learning, Cloud Computing, Python Data Science, and SQL Engineering.
             </p>
           </div>
 
@@ -432,23 +432,23 @@ const Home = () => {
                     if (fullUrl) {
                       window.open(fullUrl, '_blank', 'noopener,noreferrer');
                     } else {
-                      alert(`Certificate "${cert.title}" document can be uploaded via Admin Panel.`);
+                      alert(`Certificate "${cert.title}" PDF/Document can be managed via Admin Panel.`);
                     }
                   }}
-                  title={hasFile ? `Click to view ${cert.title} PDF / Photo` : 'Click to view certificate'}
+                  title={hasFile ? `Click to view ${cert.title} PDF` : 'Click to view certificate'}
                 >
                   <div className="cert-icon-wrapper">
                     {cert.pdf_file ? <FileText size={24} /> : <Award size={24} />}
                   </div>
                   <div>
                     <h3 className="cert-title">{cert.title}</h3>
-                    <div className="cert-issuer">AWS / Oracle / Verified Certification</div>
+                    <div className="cert-issuer">Verified Industry Credential</div>
                     <div className="cert-verified-badge">
                       <ShieldCheck size={14} />
-                      <span>Verified Credential</span>
+                      <span>Verified Certification</span>
                     </div>
                     <div className="cert-action-hint">
-                      <span>{hasFile ? 'View PDF / Photo' : 'View Certificate'}</span>
+                      <span>{hasFile ? 'View PDF Document' : 'View Credential Details'}</span>
                       <ExternalLink size={12} />
                     </div>
                   </div>
@@ -465,9 +465,9 @@ const Home = () => {
               <Mail size={14} />
               <span>Get In Touch</span>
             </div>
-            <h2 className="section-title">Let's Build Something Intelligent</h2>
+            <h2 className="section-title">Let's Build Intelligent Systems</h2>
             <p className="section-subtitle">
-              Open for AI/ML Engineering opportunities, Voice Bot development, and RAG Pipeline consultation.
+              Available for AI/ML Engineering roles, Voice Bot development, RAG architecture, and full-stack software consulting.
             </p>
           </div>
 
@@ -508,13 +508,13 @@ const Home = () => {
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+              <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem', flexWrap: 'wrap' }}>
                 <a
                   href={contactInfo?.github_link || 'https://github.com/Kuldeep-Tapodhan'}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn-secondary"
-                  style={{ flex: 1, justifyContent: 'center' }}
+                  style={{ flex: 1, justifyContent: 'center', minWidth: '130px' }}
                 >
                   <Github size={18} />
                   <span>GitHub</span>
@@ -524,7 +524,7 @@ const Home = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn-secondary"
-                  style={{ flex: 1, justifyContent: 'center' }}
+                  style={{ flex: 1, justifyContent: 'center', minWidth: '130px' }}
                 >
                   <Linkedin size={18} />
                   <span>LinkedIn</span>
@@ -532,7 +532,7 @@ const Home = () => {
               </div>
             </div>
 
-            {/* Right Glass Contact Form */}
+            {/* Right Contact Form Card */}
             <div className="contact-form-card">
               <form onSubmit={handleContactSubmit}>
                 <div className="form-group">
@@ -540,7 +540,7 @@ const Home = () => {
                   <input
                     type="text"
                     className="form-input"
-                    placeholder="e.g. Sarah Connor"
+                    placeholder="e.g. Alex Morgan"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     required
@@ -552,7 +552,7 @@ const Home = () => {
                   <input
                     type="email"
                     className="form-input"
-                    placeholder="e.g. sarah@example.com"
+                    placeholder="e.g. alex@example.com"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     required
@@ -563,7 +563,7 @@ const Home = () => {
                   <label className="form-label">Message</label>
                   <textarea
                     className="form-textarea"
-                    placeholder="Describe your project, opportunity, or idea..."
+                    placeholder="Describe your project, engineering inquiry, or opportunity..."
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     required
@@ -587,13 +587,13 @@ const Home = () => {
                 </button>
 
                 {formStatus.success && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#10b981', marginTop: '1rem', fontSize: '0.9rem', fontWeight: '600' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#10b981', marginTop: '1rem', fontSize: '0.9rem', fontWeight: '700' }}>
                     <CheckCircle2 size={18} />
-                    <span>Your message has been sent successfully!</span>
+                    <span>Message sent successfully! I will respond promptly.</span>
                   </div>
                 )}
                 {formStatus.error && (
-                  <div style={{ color: '#ef4444', marginTop: '1rem', fontSize: '0.9rem' }}>
+                  <div style={{ color: '#ef4444', marginTop: '1rem', fontSize: '0.9rem', fontWeight: '600' }}>
                     {formStatus.error}
                   </div>
                 )}

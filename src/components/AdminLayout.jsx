@@ -31,120 +31,69 @@ const AdminLayout = () => {
     ];
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
+        <div className="admin-root-container">
             {/* Ambient Neural Grid */}
             <div className="neural-background">
                 <div className="neural-grid"></div>
             </div>
 
-            {/* Mobile Top Header (Visible on <= 992px) */}
-            <div style={{
-                padding: '0.85rem 1.25rem',
-                background: 'var(--bg-card)',
-                borderBottom: '1px solid var(--border-color)',
-                backdropFilter: 'blur(16px)',
-                display: 'none',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                position: 'sticky',
-                top: 0,
-                zIndex: 20
-            }} className="admin-mobile-header">
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+            {/* Mobile Top App Bar (Visible on <= 992px) */}
+            <header className="admin-mobile-header">
+                <div className="admin-brand">
                     <img 
                         src="/favicon.svg" 
                         alt="KT Logo" 
-                        style={{ width: '32px', height: '32px', borderRadius: '8px' }} 
+                        className="admin-brand-logo" 
                     />
-                    <span style={{ fontWeight: '800', fontSize: '1rem' }}>
-                        Kuldeep<span style={{ color: 'var(--accent-cyan)' }}>.Admin</span>
+                    <span className="admin-brand-title">
+                        Kuldeep<span className="brand-highlight">.Admin</span>
                     </span>
                 </div>
                 
                 <button
                     onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
-                    style={{
-                        background: 'transparent',
-                        border: '1px solid var(--border-color)',
-                        color: 'var(--accent-cyan)',
-                        padding: '0.4rem',
-                        borderRadius: '8px',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center'
-                    }}
+                    className="admin-mobile-toggle"
+                    title="Toggle Admin Navigation"
                 >
                     {mobileSidebarOpen ? <X size={20} /> : <Menu size={20} />}
                 </button>
-            </div>
+            </header>
 
-            <div style={{ display: 'flex', flex: 1, position: 'relative' }}>
-                {/* Sidebar */}
-                <aside 
-                    style={{
-                        width: '270px',
-                        background: 'var(--bg-card)',
-                        borderRight: '1px solid var(--border-color)',
-                        backdropFilter: 'blur(16px)',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        padding: '1.5rem 1.25rem',
-                        position: 'fixed',
-                        height: '100vh',
-                        boxSizing: 'border-box',
-                        zIndex: 30,
-                        transition: 'transform 0.3s ease'
-                    }}
-                    className={`admin-sidebar ${mobileSidebarOpen ? 'mobile-open' : ''}`}
-                >
-                    {/* Brand Header */}
-                    <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        marginBottom: '2rem',
-                        paddingBottom: '1rem',
-                        borderBottom: '1px solid var(--border-color)'
-                    }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <div className="admin-body">
+                {/* Mobile Drawer Backdrop */}
+                {mobileSidebarOpen && (
+                    <div className="admin-sidebar-backdrop" onClick={() => setMobileSidebarOpen(false)} />
+                )}
+
+                {/* Sidebar Drawer */}
+                <aside className={`admin-sidebar ${mobileSidebarOpen ? 'mobile-open' : ''}`}>
+                    {/* Sidebar Header */}
+                    <div className="sidebar-header">
+                        <div className="admin-brand">
                             <img 
                                 src="/favicon.svg" 
                                 alt="KT Logo" 
-                                style={{
-                                    width: '36px',
-                                    height: '36px',
-                                    borderRadius: '10px',
-                                    boxShadow: '0 0 15px rgba(0, 242, 254, 0.4)'
-                                }} 
+                                className="admin-brand-logo"
                             />
                             <div>
-                                <div style={{ fontWeight: '800', fontSize: '1.1rem' }}>
-                                    Kuldeep<span style={{ color: 'var(--accent-cyan)' }}>.Admin</span>
+                                <div className="admin-brand-title">
+                                    Kuldeep<span className="brand-highlight">.Admin</span>
                                 </div>
-                                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                                    Control Panel v2.0
-                                </div>
+                                <div className="admin-version">Control Panel v2.4</div>
                             </div>
                         </div>
 
-                        {/* Close button inside sidebar on mobile */}
                         <button
                             onClick={() => setMobileSidebarOpen(false)}
-                            style={{
-                                background: 'transparent',
-                                border: 'none',
-                                color: 'var(--text-muted)',
-                                cursor: 'pointer',
-                                display: 'none'
-                            }}
                             className="mobile-close-btn"
+                            title="Close Sidebar"
                         >
                             <X size={18} />
                         </button>
                     </div>
 
                     {/* Navigation Items */}
-                    <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.4rem', overflowY: 'auto' }}>
+                    <nav className="sidebar-nav">
                         {navItems.map((item) => {
                             const isActive = location.pathname === item.path;
                             return (
@@ -152,24 +101,9 @@ const AdminLayout = () => {
                                     key={item.path} 
                                     to={item.path} 
                                     onClick={() => setMobileSidebarOpen(false)}
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'space-between',
-                                        padding: '0.7rem 1rem',
-                                        borderRadius: '12px',
-                                        textDecoration: 'none',
-                                        color: isActive ? '#000' : 'var(--text-secondary)',
-                                        background: isActive 
-                                            ? 'linear-gradient(135deg, var(--accent-cyan), var(--accent-blue))' 
-                                            : 'transparent',
-                                        fontWeight: isActive ? '700' : '600',
-                                        fontSize: '0.9rem',
-                                        transition: 'all 0.2s ease',
-                                        boxShadow: isActive ? 'var(--glow-cyan)' : 'none'
-                                    }}
+                                    className={`sidebar-link ${isActive ? 'active' : ''}`}
                                 >
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                    <div className="sidebar-link-content">
                                         {item.icon}
                                         <span>{item.label}</span>
                                     </div>
@@ -179,34 +113,19 @@ const AdminLayout = () => {
                         })}
                     </nav>
 
-                    {/* Bottom Actions: View Site & Logout */}
-                    <div style={{ paddingTop: '1rem', borderTop: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                    {/* Bottom Actions */}
+                    <div className="sidebar-footer">
                         <button 
                             onClick={() => { navigate('/'); setMobileSidebarOpen(false); }} 
-                            className="btn-secondary"
-                            style={{ width: '100%', justifyContent: 'center', fontSize: '0.85rem', padding: '0.6rem' }}
+                            className="btn-secondary sidebar-action-btn"
                         >
                             <HomeIcon size={16} />
-                            <span>Public Site</span>
+                            <span>Public Website</span>
                         </button>
 
                         <button 
                             onClick={handleLogout} 
-                            style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: '0.6rem',
-                                padding: '0.65rem',
-                                borderRadius: '12px',
-                                background: 'rgba(239, 68, 68, 0.1)',
-                                border: '1px solid rgba(239, 68, 68, 0.3)',
-                                color: '#ef4444',
-                                fontWeight: '700',
-                                fontSize: '0.85rem',
-                                cursor: 'pointer',
-                                transition: 'all 0.2s'
-                            }}
+                            className="sidebar-logout-btn"
                         >
                             <LogOut size={16} />
                             <span>Terminate Session</span>
@@ -214,7 +133,7 @@ const AdminLayout = () => {
                     </div>
                 </aside>
 
-                {/* Main Content Area */}
+                {/* Main Dashboard Content Workspace */}
                 <main className="admin-main-content">
                     <Outlet />
                 </main>
@@ -222,14 +141,169 @@ const AdminLayout = () => {
 
             {/* CSS styles for Admin Layout responsiveness */}
             <style>{`
+                .admin-root-container {
+                    display: flex;
+                    flex-direction: column;
+                    min-height: 100vh;
+                    background: var(--bg-primary);
+                    color: var(--text-primary);
+                }
+                .admin-mobile-header {
+                    padding: 0.85rem 1.25rem;
+                    background: var(--bg-card);
+                    border-bottom: 1px solid var(--border-color);
+                    backdrop-filter: blur(20px);
+                    display: none;
+                    align-items: center;
+                    justify-content: space-between;
+                    position: sticky;
+                    top: 0;
+                    z-index: 50;
+                }
+                .admin-brand {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.7rem;
+                }
+                .admin-brand-logo {
+                    width: 34px;
+                    height: 34px;
+                    border-radius: 10px;
+                    box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+                }
+                .admin-brand-title {
+                    font-weight: 800;
+                    font-size: 1.05rem;
+                }
+                .admin-version {
+                    font-size: 0.72rem;
+                    color: var(--text-muted);
+                }
+                .admin-mobile-toggle {
+                    background: var(--bg-card);
+                    border: 1px solid var(--border-color);
+                    color: var(--accent-cyan);
+                    padding: 0.45rem;
+                    border-radius: 10px;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                }
+                .admin-body {
+                    display: flex;
+                    flex: 1;
+                    position: relative;
+                }
+                .admin-sidebar-backdrop {
+                    position: fixed;
+                    inset: 0;
+                    background: rgba(0,0,0,0.6);
+                    backdrop-filter: blur(4px);
+                    z-index: 98;
+                }
+                .admin-sidebar {
+                    width: 275px;
+                    background: var(--bg-card);
+                    border-right: 1px solid var(--border-color);
+                    backdrop-filter: blur(24px);
+                    display: flex;
+                    flex-direction: column;
+                    padding: 1.5rem 1.2rem;
+                    position: fixed;
+                    height: 100vh;
+                    box-sizing: border-box;
+                    z-index: 99;
+                    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                }
+                .sidebar-header {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    margin-bottom: 1.8rem;
+                    padding-bottom: 1rem;
+                    border-bottom: 1px solid var(--border-color);
+                }
+                .mobile-close-btn {
+                    background: transparent;
+                    border: none;
+                    color: var(--text-muted);
+                    cursor: pointer;
+                    display: none;
+                }
+                .sidebar-nav {
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.4rem;
+                    overflow-y: auto;
+                }
+                .sidebar-link {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    padding: 0.75rem 1rem;
+                    border-radius: 12px;
+                    text-decoration: none;
+                    color: var(--text-secondary);
+                    background: transparent;
+                    font-weight: 600;
+                    font-size: 0.9rem;
+                    transition: all 0.2s ease;
+                }
+                .sidebar-link-content {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.75rem;
+                }
+                .sidebar-link:hover {
+                    background: rgba(0, 242, 254, 0.08);
+                    color: var(--accent-cyan);
+                }
+                .sidebar-link.active {
+                    color: #000;
+                    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+                    font-weight: 800;
+                    box-shadow: var(--glow-cyan);
+                }
+                .sidebar-footer {
+                    padding-top: 1rem;
+                    border-top: 1px solid var(--border-color);
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.6rem;
+                }
+                .sidebar-action-btn {
+                    width: 100%;
+                    justify-content: center;
+                    font-size: 0.85rem;
+                    padding: 0.6rem;
+                }
+                .sidebar-logout-btn {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 0.6rem;
+                    padding: 0.65rem;
+                    border-radius: 12px;
+                    background: rgba(239, 68, 68, 0.1);
+                    border: 1px solid rgba(239, 68, 68, 0.3);
+                    color: #ef4444;
+                    font-weight: 700;
+                    font-size: 0.85rem;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                }
+                .sidebar-logout-btn:hover {
+                    background: rgba(239, 68, 68, 0.2);
+                }
                 .admin-main-content {
-                    margin-left: 270px;
+                    margin-left: 275px;
                     flex: 1;
                     padding: 2.5rem;
                     position: relative;
                     z-index: 1;
                     max-width: 1200px;
-                    width: calc(100% - 270px);
+                    width: calc(100% - 275px);
                 }
 
                 @media (max-width: 992px) {

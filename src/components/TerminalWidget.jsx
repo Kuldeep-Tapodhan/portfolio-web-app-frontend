@@ -1,15 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Terminal as TerminalIcon, Play, RefreshCw, Send, Sparkles } from 'lucide-react';
+import { Terminal as TerminalIcon, Send, Sparkles, Trash2, HelpCircle, Code } from 'lucide-react';
 
 const TerminalWidget = () => {
   const [history, setHistory] = useState([
     {
       type: 'system',
-      text: '🤖 Kuldeep AI Agent Terminal v2.4 initialized.'
+      text: '🤖 Kuldeep AI Neural CLI v2.4 initialized [zsh/x86_64].'
     },
     {
       type: 'system',
-      text: 'Type "help" or click one of the quick command pills below to explore.'
+      text: 'Type "help" or click one of the quick command pills below to interact.'
     }
   ]);
   const [input, setInput] = useState('');
@@ -43,64 +43,63 @@ const TerminalWidget = () => {
       case 'help':
         responseText = [
           '⚡ Available Commands:',
-          '  about      - Display developer summary & background',
-          '  voice-bot  - Details on Multi-Agent LiveKit Voice Bot Architecture',
-          '  rag        - Details on BioMistral-7B RAG Healthcare Chatbot',
-          '  skills     - List AI/ML, Backend & DevOps skill stack',
-          '  projects   - Show list of production AI projects',
-          '  contact    - Retrieve contact information & links',
-          '  clear      - Clear the terminal screen'
+          '  about      - Display developer summary & current focus',
+          '  voice-bot  - LiveKit Multi-Agent Voice AI Architecture',
+          '  rag        - BioMistral-7B Regional Healthcare RAG Chatbot',
+          '  skills     - AI/ML, LLM Fine-Tuning, Backend & DevOps stack',
+          '  projects   - Production AI systems showcase',
+          '  contact    - Retrieve direct contact details & links',
+          '  clear      - Clear terminal output screen'
         ];
         break;
       case 'about':
         responseText = [
-          '👤 Kuldeep Tapodhan | Python AI/ML Developer',
-          '📍 Company: Amenity Technologies (1+ Years Exp)',
-          '🎓 Qualification: B.Tech in Information Technology',
-          '💡 Specialization: Multi-Agent Systems, RAG Pipelines, Computer Vision, FastAPI/Django Backends.'
+          '👤 Kuldeep Tapodhan | Python AI & ML Developer',
+          '📍 Company: Amenity Technologies (1+ Years Industry Experience)',
+          '🎓 Degree: B.Tech in Information Technology',
+          '💡 Expertise: Multi-Agent Systems, RAG Pipelines, Computer Vision, Fast-API / Django REST Framework.'
         ];
         break;
       case 'voice-bot':
         responseText = [
           '🎙️ Multi-Agent Voice AI Platform:',
-          '  • SDK: LiveKit Agents SDK + Deepgram Nova 3 (STT) + Cartesia Sonic (TTS)',
-          '  • Architecture: Plug & Play domain orchestration with zero dead-air handoffs',
-          '  • Models: Gemini 2.5 Flash, Claude 3.5, OpenAI GPT-4o',
-          '  • Transport: WebRTC & SIP/VOIP integration with VPS Docker deployment'
+          '  • Stack: LiveKit Agents SDK + Deepgram Nova 3 (STT) + Cartesia Sonic (TTS)',
+          '  • Core Feature: Zero-latency domain handoffs across specialized agents',
+          '  • LLM Backbones: Gemini 2.5 Flash, Claude 3.5 Sonnet, GPT-4o',
+          '  • Transport: WebRTC real-time audio + SIP/VOIP telemetry bridge'
         ];
         break;
       case 'rag':
         responseText = [
           '🏥 Regional Health Assistance Chatbot (RAG):',
-          '  • LLM: BioMistral-7B fine-tuned on Lightning AI (MedQuAD, HealthcareMagic)',
-          '  • Vector DB: ChromaDB with 384-dimensional Sentence Transformers',
-          '  • Features: 127+ medical docs, Tesseract OCR report parsing, Haversine Hospital finder'
+          '  • Model: BioMistral-7B fine-tuned via QLoRA (MedQuAD & HealthcareMagic datasets)',
+          '  • Vector Store: ChromaDB with 384d Sentence Transformers',
+          '  • Capabilities: 127+ clinical PDF parsing, Tesseract OCR OCR, Haversine GPS hospital locator'
         ];
         break;
       case 'skills':
         responseText = [
-          '🛠️ Tech Stack Overview:',
-          '  • AI/ML: PyTorch, TensorFlow, OpenCV, Scikit-Learn, LangChain, ChromaDB, RAG',
+          '🛠️ Technical Capabilities:',
+          '  • AI & ML: PyTorch, TensorFlow, OpenCV, Scikit-Learn, LangChain, ChromaDB, RAG',
           '  • LLMs & Voice: Llama 3.3, BioMistral, LiveKit, Silero VAD, Deepgram, Cartesia',
           '  • Backend: FastAPI, Django / DRF, Flask, REST APIs, PostgreSQL, MySQL',
-          '  • DevOps: Docker, Nginx, SSL, DNS, AWS (S3, EC2), GitHub Actions (CI/CD)'
+          '  • Cloud & DevOps: Docker, Nginx, SSL, DNS, AWS EC2/S3, GitHub Actions'
         ];
         break;
       case 'projects':
         responseText = [
-          '🚀 Highlight Projects:',
-          '  1. Multi-Agent Voice Bot (LiveKit + Django + WebRTC/SIP)',
+          '🚀 Flagship AI Projects:',
+          '  1. Multi-Agent Voice Bot Platform (LiveKit + DRF + WebRTC/SIP)',
           '  2. Regional Health Assistance Chatbot (BioMistral RAG + FastAPI)',
-          '  3. Plantify - Disease Detection System & Mobile App (TFLite + Kotlin)',
-          '  4. Bollywood Song Recommendation System (KNN + Flask)',
-          '  5. Disease Prediction & Drug Recommendation (Random Forest + Gemini)',
-          '  6. Dynamic Task Management System (Django DRF + PostgreSQL)',
-          '  7. College Fest Event Management (Java JSP + JDBC + MySQL)'
+          '  3. Plantify - Disease Detection Mobile System (TFLite + Kotlin)',
+          '  4. Bollywood Song Recommendation Engine (KNN + Flask)',
+          '  5. Disease Prediction & Drug Recommender (Random Forest + Gemini LLM)',
+          '  6. Production Dynamic Task Management System (Django DRF + PostgreSQL)'
         ];
         break;
       case 'contact':
         responseText = [
-          '📬 Reach Out:',
+          '📬 Direct Channels:',
           '  • Email: kuldeep.tapodhan0306@gmail.com',
           '  • GitHub: https://github.com/Kuldeep-Tapodhan',
           '  • LinkedIn: https://www.linkedin.com/in/kuldeep-tapodhan-780701251/',
@@ -109,7 +108,7 @@ const TerminalWidget = () => {
         break;
       default:
         responseText = [
-          `⚠️ Command not recognized: "${trimmed}". Type "help" for a list of available commands.`
+          `⚠️ Command not recognized: "${trimmed}". Type "help" or click a pill shortcut.`
         ];
         break;
     }
@@ -137,7 +136,7 @@ const TerminalWidget = () => {
           <span>kuldeep@neural-node:~ (zsh)</span>
         </div>
         <div className="terminal-status">
-          <span className="status-indicator"></span>
+          <span className="pulse-dot" style={{ width: '6px', height: '6px' }}></span>
           <span>ONLINE</span>
         </div>
       </div>
@@ -190,7 +189,7 @@ const TerminalWidget = () => {
           value={input}
           onChange={(e) => setInput(e.target.value)}
         />
-        <button type="submit" className="terminal-submit-btn" title="Run command">
+        <button type="submit" className="terminal-submit-btn" title="Execute command">
           <Send size={14} />
         </button>
       </form>
