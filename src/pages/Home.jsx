@@ -119,6 +119,17 @@ const Home = () => {
   const currentCompanyTag = experiences[0]?.company_name ? `@ ${experiences[0].company_name}` : '';
   const currentRoleSub = experiences[0] ? `${experiences[0].company_name} • ${experiences[0].role}` : (profile?.title || '');
 
+  // Date formatting helper for experiences and education timelines
+  const formatDateRange = (startDate, endDate) => {
+    if (!startDate) return '';
+    const startObj = new Date(startDate);
+    const startStr = !isNaN(startObj) ? startObj.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : startDate;
+    if (!endDate) return `${startStr} - Present`;
+    const endObj = new Date(endDate);
+    const endStr = !isNaN(endObj) ? endObj.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : endDate;
+    return `${startStr} - ${endStr}`;
+  };
+
   return (
     <div className="home-container">
       {/* Ambient Neural Grid & Background */}
@@ -251,7 +262,7 @@ const Home = () => {
           {/* Bento Grid */}
           <div className="bento-grid">
             {filteredProjects.map((project, idx) => {
-              const isFeatured = idx === 0 || idx === 1;
+              const isFeatured = Boolean(project.is_featured || idx === 0);
               return (
                 <div
                   key={project.id || idx}
@@ -260,7 +271,7 @@ const Home = () => {
                   <div>
                     <div className="bento-badge">
                       <Sparkles size={12} />
-                      <span>{isFeatured ? 'Flagship Architecture' : 'Production Build'}</span>
+                      <span>{isFeatured ? 'Featured Architecture' : 'Production Build'}</span>
                     </div>
                     <h3 className="project-title">{project.title}</h3>
                     <p className="project-description">{project.description}</p>
@@ -385,9 +396,11 @@ const Home = () => {
                       <span className="timeline-role">{exp.role}</span>
                       <div className="timeline-company">@ {exp.company_name}</div>
                     </div>
-                    <span className="timeline-date">
-                      {exp.start_date ? new Date(exp.start_date).getFullYear() : '2024'} - Present
-                    </span>
+                    {exp.start_date && (
+                      <span className="timeline-date">
+                        {formatDateRange(exp.start_date, exp.end_date)}
+                      </span>
+                    )}
                   </div>
                   <p className="timeline-desc">{exp.description}</p>
                 </div>
@@ -419,9 +432,11 @@ const Home = () => {
                       <span className="timeline-role">{edu.degree}</span>
                       <div className="timeline-company edu">{edu.institution}</div>
                     </div>
-                    <span className="timeline-date edu">
-                      {edu.start_date ? new Date(edu.start_date).getFullYear() : '2022'} - {edu.end_date ? new Date(edu.end_date).getFullYear() : '2026'}
-                    </span>
+                    {edu.start_date && (
+                      <span className="timeline-date edu">
+                        {formatDateRange(edu.start_date, edu.end_date)}
+                      </span>
+                    )}
                   </div>
                   <p className="timeline-desc">{edu.description}</p>
                 </div>
