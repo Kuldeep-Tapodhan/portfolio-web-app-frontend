@@ -75,7 +75,7 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="footer-bottom-bar">
           <div className="footer-copyright">
-            © {new Date().getFullYear()} Kuldeep Tapodhan. Built with React, Vite & DRF.
+            © {new Date().getFullYear()} Kuldeep Tapodhan.
           </div>
 
           <button onClick={scrollToTop} className="scroll-top-btn" title="Scroll to Top">

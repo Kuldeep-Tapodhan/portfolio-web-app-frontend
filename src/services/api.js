@@ -24,10 +24,21 @@ const api = axios.create({
 export const getMediaUrl = (path) => {
     if (!path) return '';
     if (path.startsWith('http://') || path.startsWith('https://')) {
+        if (typeof window !== 'undefined' && path.includes('://backend:')) {
+            const host = window.location.hostname || 'localhost';
+            return path.replace('://backend:', `://${host}:`);
+        }
+        return path;
+    }
+    if (path.startsWith('/certificates/') || path.startsWith('/static/')) {
         return path;
     }
     let target = import.meta.env.VITE_API_TARGET || import.meta.env.VITE_BACKEND_URL || 'https://portfolio-web-app-backend.onrender.com';
     target = target.trim().replace(/\/+$/, '').replace(/\/api$/, '');
+    if (typeof window !== 'undefined' && target.includes('://backend:')) {
+        const host = window.location.hostname || 'localhost';
+        target = target.replace('://backend:', `://${host}:`);
+    }
     return `${target}${path.startsWith('/') ? '' : '/'}${path}`;
 };
 

@@ -494,22 +494,17 @@ const Home = () => {
 
           <div className="certifications-grid">
             {certifications.map((cert, idx) => {
-              const fileUrl = cert.pdf_file || cert.image;
-              const hasFile = Boolean(fileUrl);
-              const fullUrl = hasFile ? getMediaUrl(fileUrl) : null;
+              const fileUrl = cert.pdf_file || cert.image || '/certificates/sample-certificate.pdf';
+              const fullUrl = getMediaUrl(fileUrl);
 
               return (
-                <div 
+                <a 
                   key={cert.id || idx} 
+                  href={fullUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="cert-card"
-                  onClick={() => {
-                    if (fullUrl) {
-                      window.open(fullUrl, '_blank', 'noopener,noreferrer');
-                    } else {
-                      alert(`Certificate "${cert.title}" PDF/Document can be managed via Admin Panel.`);
-                    }
-                  }}
-                  title={hasFile ? `Click to view ${cert.title} PDF` : 'Click to view certificate'}
+                  title={`Click to view ${cert.title} PDF in a new tab`}
                 >
                   <div className="cert-icon-wrapper">
                     {cert.pdf_file ? <FileText size={24} /> : <Award size={24} />}
@@ -522,11 +517,11 @@ const Home = () => {
                       <span>Verified Certification</span>
                     </div>
                     <div className="cert-action-hint">
-                      <span>{hasFile ? 'View PDF Document' : 'View Credential Details'}</span>
+                      <span>View PDF Document</span>
                       <ExternalLink size={12} />
                     </div>
                   </div>
-                </div>
+                </a>
               );
             })}
           </div>
