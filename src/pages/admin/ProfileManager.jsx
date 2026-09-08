@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import api from "../../services/api";
-import { User, Save, FileText, Upload, Image as ImageIcon } from "lucide-react";
+import api, { getMediaUrl } from "../../services/api";
+import { User, Save, FileText, Upload, Image as ImageIcon, ExternalLink } from "lucide-react";
 
 const ProfileManager = () => {
   const [loading, setLoading] = useState(false);
@@ -17,6 +17,7 @@ const ProfileManager = () => {
   });
 
   const [imagePreview, setImagePreview] = useState(null);
+  const [resumePreviewUrl, setResumePreviewUrl] = useState(null);
 
   // --- 1. Fetch Data ---
   useEffect(() => {
@@ -45,10 +46,13 @@ const ProfileManager = () => {
           resume: null,
         });
 
-        // Set existing image for preview
+        // Set existing image and resume for preview
         if (profile.profile_picture) {
           const url = profile.profile_picture;
           setImagePreview(url);
+        }
+        if (profile.resume) {
+          setResumePreviewUrl(profile.resume);
         }
       }
     } catch (error) {
@@ -316,6 +320,27 @@ const ProfileManager = () => {
           <p style={{ fontSize: "0.8rem", color: "#64748b", marginTop: "5px" }}>
             Upload your latest resume for recruiters to download.
           </p>
+          {resumePreviewUrl && (
+            <div style={{ marginTop: "8px" }}>
+              <a
+                href={getMediaUrl(resumePreviewUrl)}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  color: "#3b82f6",
+                  fontSize: "0.85rem",
+                  fontWeight: "600",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "5px",
+                  textDecoration: "none",
+                }}
+              >
+                <FileText size={14} /> View Currently Uploaded Resume (PDF){" "}
+                <ExternalLink size={13} />
+              </a>
+            </div>
+          )}
         </div>
 
         <button

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Terminal as TerminalIcon, Send, Sparkles, Trash2, HelpCircle, Code } from 'lucide-react';
+import { getMediaUrl } from '../services/api';
 
 const TerminalWidget = ({ profile, skills = [], projects = [], contactInfo, experiences = [], education = [] }) => {
   const [history, setHistory] = useState([
@@ -18,6 +19,7 @@ const TerminalWidget = ({ profile, skills = [], projects = [], contactInfo, expe
   const commandShortcuts = [
     'help',
     'about',
+    'resume',
     'skills',
     'projects',
     'contact',
@@ -42,11 +44,30 @@ const TerminalWidget = ({ profile, skills = [], projects = [], contactInfo, expe
         responseText = [
           '⚡ Available Commands:',
           '  about      - Display developer summary & current profile',
+          '  resume     - View & open developer Resume PDF',
           '  skills     - Technical capabilities & model stack',
           '  projects   - Production AI & engineering builds',
           '  contact    - Retrieve direct contact details & links',
           '  clear      - Clear terminal output screen'
         ];
+        break;
+      case 'resume':
+        if (profile?.resume) {
+          const resumeUrl = getMediaUrl(profile.resume);
+          try {
+            window.open(resumeUrl, '_blank', 'noopener,noreferrer');
+          } catch (e) {
+            console.error('Failed to open window automatically', e);
+          }
+          responseText = [
+            '📄 Opening Developer Resume PDF in a new tab...',
+            `  URL: ${resumeUrl}`
+          ];
+        } else {
+          responseText = [
+            '📄 Resume PDF is currently unavailable or being updated.'
+          ];
+        }
         break;
       case 'about':
         responseText = [

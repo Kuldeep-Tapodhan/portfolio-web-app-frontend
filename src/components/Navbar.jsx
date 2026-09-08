@@ -1,8 +1,9 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Sun, Moon, Menu, X, Terminal, Sparkles, User, Briefcase, GraduationCap, Award, Mail, ArrowUpRight } from "lucide-react";
+import { Sun, Moon, Menu, X, Terminal, Sparkles, User, Briefcase, GraduationCap, Award, Mail, ArrowUpRight, FileText } from "lucide-react";
 import { ThemeContext } from "../context/ThemeContext";
 import { getProfile, getExperiences } from "../services/portfolioApi";
+import { getMediaUrl } from "../services/api";
 
 const Navbar = () => {
   const { isDarkMode, toggleTheme } = useContext(ThemeContext);
@@ -66,6 +67,20 @@ const Navbar = () => {
             </div>
           )}
 
+          {profile?.resume && (
+            <a
+              href={getMediaUrl(profile.resume)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="nav-resume-btn"
+              title="View / Download Resume (PDF)"
+            >
+              <FileText size={15} />
+              <span>Resume</span>
+              <ArrowUpRight size={13} />
+            </a>
+          )}
+
           <button
             onClick={toggleTheme}
             className="theme-toggle-btn"
@@ -113,6 +128,18 @@ const Navbar = () => {
             <a href="#contact" className="mobile-link" onClick={() => setMobileMenuOpen(false)}>
               <Mail size={18} /> <span>Contact Me</span>
             </a>
+            {profile?.resume && (
+              <a
+                href={getMediaUrl(profile.resume)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mobile-link nav-resume-mobile-link"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <FileText size={18} /> <span>Resume (PDF)</span>
+                <ArrowUpRight size={16} style={{ marginLeft: "auto" }} />
+              </a>
+            )}
           </nav>
         </>
       )}
@@ -226,6 +253,34 @@ const Navbar = () => {
           font-weight: 600;
           color: var(--text-primary);
           white-space: nowrap;
+        }
+        .nav-resume-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4rem;
+          padding: 0.4rem 0.9rem;
+          border-radius: 9999px;
+          background: linear-gradient(135deg, rgba(0, 242, 254, 0.15), rgba(99, 102, 241, 0.15));
+          border: 1px solid rgba(0, 242, 254, 0.4);
+          color: var(--accent-cyan);
+          font-size: 0.85rem;
+          font-weight: 700;
+          text-decoration: none;
+          transition: all 0.3s ease;
+          box-shadow: 0 0 10px rgba(0, 242, 254, 0.15);
+        }
+        .nav-resume-btn:hover {
+          transform: translateY(-2px);
+          background: linear-gradient(135deg, rgba(0, 242, 254, 0.3), rgba(99, 102, 241, 0.3));
+          border-color: var(--accent-cyan);
+          color: #ffffff;
+          box-shadow: 0 0 18px rgba(0, 242, 254, 0.35);
+        }
+        .nav-resume-mobile-link {
+          background: rgba(0, 242, 254, 0.08);
+          border: 1px solid rgba(0, 242, 254, 0.25);
+          color: var(--accent-cyan) !important;
+          margin-top: 0.4rem;
         }
         .theme-toggle-btn {
           background: var(--bg-card);

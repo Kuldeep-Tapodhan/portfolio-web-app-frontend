@@ -374,6 +374,47 @@ html, body {
   color: var(--accent-cyan);
 }
 
+.btn-resume {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.85rem 1.6rem;
+  border-radius: 14px;
+  background: rgba(0, 242, 254, 0.08);
+  border: 1px solid rgba(0, 242, 254, 0.35);
+  color: var(--accent-cyan, #00f2fe);
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-decoration: none;
+  backdrop-filter: blur(14px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+@media (max-width: 640px) {
+  .hero-cta-group .btn-resume {
+    width: 100%;
+    justify-content: center;
+    padding: 0.8rem 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .btn-resume {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+.btn-resume:hover {
+  transform: translateY(-2px);
+  background: rgba(0, 242, 254, 0.18);
+  border-color: rgba(0, 242, 254, 0.65);
+  box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+  color: #ffffff;
+}
+
 /* =========================================================
    TERMINAL WIDGET
    ========================================================= */

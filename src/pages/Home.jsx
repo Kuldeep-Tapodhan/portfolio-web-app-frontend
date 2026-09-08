@@ -233,6 +233,19 @@ const Home = () => {
                 <span>Explore Projects</span>
                 <ArrowRight size={18} />
               </a>
+              {profile?.resume && (
+                <a
+                  href={getMediaUrl(profile.resume)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-resume"
+                  title="View / Download Resume (PDF)"
+                >
+                  <FileText size={18} />
+                  <span>Resume</span>
+                  <ExternalLink size={14} style={{ opacity: 0.8 }} />
+                </a>
+              )}
               <a href="#contact" className="btn-secondary">
                 <Mail size={18} />
                 <span>Get In Touch</span>
